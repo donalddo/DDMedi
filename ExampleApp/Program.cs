@@ -36,7 +36,7 @@ namespace ExampleApp
         public async Task ProcessAsync(ISupplierContext<DoneEvent> Context, CancellationToken Token = default)
         {
             await Task.Delay(1000);
-            await Context.DDBroker.Publish(new DoneEvent2(Context.CorrelationId));
+            await Context.DDBroker.Publish(new DoneEvent2(Context.CorrelationId)); // DoneEvent2 is fire and forget
             await Console.Out.WriteLineAsync($"this is {nameof(IESupplier<DoneEvent>)} Count: {Context.Inputs.Counted}");
             await Task.Delay(2000);
         }
@@ -113,20 +113,20 @@ namespace ExampleApp
         static async Task Main(string[] args)
         {
             var ddCollection = new DDMediCollection()
-                .AddSupplier<WhateverSuppliers>(SupplierLifetime.Singleton)
-                .AddSuppliers()
-                .AddQueue(suppliers => suppliers.AddESupplier<WhateverESuppliers>())
-                .AddQueue(suppliers => suppliers.AddESuppliers())
+                .AddSupplier<WhateverSuppliers>(SupplierLifetime.Singleton) // register WhateverSuppliers as singleton
+                .AddSuppliers() // register all other Suppliers as scope in this Example App project, WhateverSuppliers' lifetime is still singleton
+                .AddQueue(suppliers => suppliers.AddESupplier<WhateverESuppliers>()) // register WhateverESuppliers in a dedicated queue
+                .AddQueue(suppliers => suppliers.AddESuppliers()) // register all other ESuppliers in another new queue
                 .AddAsyncDecorator<DoCommand, WhateverDecorators>()
-                .AddDecorator<DoCommand, WhateverDecorators>()
+                .AddDecorator<DoCommand, WhateverDecorators>() 
                 .AddDecorator<DoCommandObj, object, WhateverDecorators>()
-                .AddEDecorator<DoneEvent, WhateverEDecorators>();
+                .AddEDecorator<DoneEvent, WhateverEDecorators>(); // decorator for all ESuppliers handling DoneEvent
             var builder = new ContainerBuilder();
             builder.AddDDMediFactory(ddCollection.BuildSuppliers());
             var container = builder.Build();
             var broker = container.Resolve<IDDBroker>();
             var ev = new DoneEvent(40);
-            await broker.Publish(ev);
+            await broker.Publish(ev); // long running for handling DoneEvent won't effect on next line of code
             await broker.ProcessAsync(new DoCommand { Count = 10 });
 
             var channel = broker.CreateAsyncSupplierChannel<DoCommand>();

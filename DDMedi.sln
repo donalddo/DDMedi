@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDMedi.Test", "DDMedi.Test\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleApp", "ExampleApp\ExampleApp.csproj", "{58A56249-34B7-433B-8327-7349AC3A444E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDMedi.AutoFac", "DDMedi.AutoFac\DDMedi.AutoFac.csproj", "{7DFD6E3E-E035-4C9A-9174-E1CFDF14BB39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDMedi.AutoFac", "DDMedi.AutoFac\DDMedi.AutoFac.csproj", "{7DFD6E3E-E035-4C9A-9174-E1CFDF14BB39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWebApi", "DemoWebApi\DemoWebApi.csproj", "{8A4521BA-DC2F-4C3F-B38B-70994DE0D9C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{7DFD6E3E-E035-4C9A-9174-E1CFDF14BB39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DFD6E3E-E035-4C9A-9174-E1CFDF14BB39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DFD6E3E-E035-4C9A-9174-E1CFDF14BB39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A4521BA-DC2F-4C3F-B38B-70994DE0D9C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A4521BA-DC2F-4C3F-B38B-70994DE0D9C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A4521BA-DC2F-4C3F-B38B-70994DE0D9C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A4521BA-DC2F-4C3F-B38B-70994DE0D9C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
