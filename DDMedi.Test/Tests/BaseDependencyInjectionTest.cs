@@ -1,6 +1,7 @@
 ﻿using DDMedi.Test.Dummies;
 using DDMedi.Test.Helper;
 using DDMedi.Test.Mocks;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -458,13 +459,13 @@ namespace DDMedi.Test.Tests
             var mockSupplier4 = supplier4.Mock;
 
             mockSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => ddBroker1 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker1 = context.DDBroker);
             mockSupplier2.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => ddBroker2 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext>((inputs, context) => ddBroker2 = context.DDBroker);
             mockSupplier3.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => ddBroker3 = context.DDBroker);
+                .Callback< IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker3 = context.DDBroker);
             mockSupplier4.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => ddBroker4 = context.DDBroker);
+                .Callback< IInputs<object>, ISupplierContext>((inputs, context) => ddBroker4 = context.DDBroker);
 
             var supplierChannel = this.ddBroker.CreateSupplierChannel<IInputs>();
             var supplierChannel2 = this.ddBroker.CreateAsyncSupplierChannel<IInputs>();
@@ -522,19 +523,19 @@ namespace DDMedi.Test.Tests
             var mockDecoratorAll = decoratorAll.Mock;
 
             mockSupplierAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => ddBroker1 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker1 = context.DDBroker);
             mockSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => ddBroker2 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext>((inputs, context) => ddBroker2 = context.DDBroker);
 
             mockDecoratorAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => ddBroker3 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker3 = context.DDBroker);
             mockDecorator.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => ddBroker4 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext>((inputs, context) => ddBroker4 = context.DDBroker);
 
             mockDecoratorAllAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => ddBroker5 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker5 = context.DDBroker);
             mockDecoratorAll.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => ddBroker6 = context.DDBroker);
+                .Callback<IInputs, ISupplierContext>((inputs, context) => ddBroker6 = context.DDBroker);
 
             var supplierChannel = this.ddBroker.CreateSupplierChannel<IInputs>();
             supplierChannel.Process();
@@ -599,19 +600,19 @@ namespace DDMedi.Test.Tests
             var mockDecoratorAll = decoratorAll.Mock;
 
             mockSupplierAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => ddBroker1 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker1 = context.DDBroker);
             mockSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => ddBroker2 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext>((inputs, context) => ddBroker2 = context.DDBroker);
 
             mockDecoratorAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => ddBroker3 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker3 = context.DDBroker);
             mockDecorator.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => ddBroker4 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext>((inputs, context) => ddBroker4 = context.DDBroker);
 
             mockDecoratorAllAsync.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => ddBroker5 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => ddBroker5 = context.DDBroker);
             mockDecoratorAll.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => ddBroker6 = context.DDBroker);
+                .Callback<IInputs<object>, ISupplierContext>((inputs, context) => ddBroker6 = context.DDBroker);
 
             var supplierChannel = this.ddBroker.CreateSupplierChannel<IInputs<object>, object>();
             supplierChannel.Process();
@@ -641,6 +642,258 @@ namespace DDMedi.Test.Tests
             Assert.IsFalse(asyncSupplierChannel.HasSupplier(supplierAsync));
             Assert.IsFalse(supplierChannel.HasSupplier(supplier));
         }
+
+        private ISupplierScopeFactory SetUpScopeFactory()
+        => BuildNewScopeFactory(ddCollection
+                .AddSupplier<MockAllSupplier<IInputs<object>, object>>()
+                .AddSupplier<MockAllSupplier<IInputs>>()
+                .AddAsyncDecorator<IInputs<object>, object, MockAllDecorator<IInputs<object>, object>>()
+                .AddDecorator<IInputs<object>, object, MockAllDecorator<IInputs<object>, object>>()
+                .AddAsyncDecorator<IInputs, MockAllDecorator<IInputs>>()
+                .AddDecorator<IInputs, MockAllDecorator<IInputs>>()
+                .BuildSuppliers());
+
+        [Test]
+        public async Task DecoratorSameScopesTest()
+        {
+            var scopeFactory = SetUpScopeFactory();
+
+            var provider1 = scopeFactory.CreateScope().ServiceProvider;
+
+            var broker1 = provider1.Get<IDDBroker>();
+            var channel1 = broker1.CreateAsyncSupplierChannel<IInputs<object>, object>();
+            var channel2 = broker1.CreateSupplierChannel<IInputs<object>, object>();
+            var channel3 = broker1.CreateAsyncSupplierChannel<IInputs>();
+            var channel4 = broker1.CreateSupplierChannel<IInputs>();
+            var decoratorOutput = provider1.Get<MockAllDecorator<IInputs<object>, object>>();
+            var decorator = provider1.Get<MockAllDecorator<IInputs>>();
+            var supplierOutput1 = provider1.Get<MockAllSupplier<IInputs<object>, object>>();
+            var supplier1 = provider1.Get<MockAllSupplier<IInputs>>();
+            ISupplierContext context1 = null;
+            ISupplierContext context2 = null;
+            ISupplierContext context3 = null;
+            ISupplierContext context4 = null;
+            ISupplierContext context5 = null;
+            ISupplierContext context6 = null;
+            ISupplierContext context7 = null;
+            ISupplierContext context8 = null;
+            int count = 0;
+            supplierOutput1.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((x, y, z) =>
+                {
+                    if (count++ == 0) context1 = y; context5 = y;
+                });
+            supplierOutput1.Mock.SetUpProcessAny()
+                .Callback<IInputs<object>, ISupplierContext>((x, y) =>
+                {
+                    if (count++ == 1) context2 = y; context6 = y;
+                });
+            supplier1.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs, ISupplierContext, CancellationToken>((x, y, z) =>
+                {
+                    if (count++ == 2) context3 = y; context7 = y;
+                });
+            supplier1.Mock.SetUpProcessAny()
+                .Callback<IInputs, ISupplierContext>((x, y) =>
+                {
+                    if (count++ == 3) context4 = y; context8 = y;
+                });
+
+            await channel1.ProcessAsync();
+            channel2.Process();
+            await channel3.ProcessAsync();
+            channel4.Process();
+            decoratorOutput.Provider = provider1;
+            decorator.Provider = provider1;
+            await channel1.ProcessAsync();
+            channel2.Process();
+            await channel3.ProcessAsync();
+            channel4.Process();
+
+            decoratorOutput.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            decoratorOutput.Mock.VerifyProcessAny(Times.Exactly(2));
+            decorator.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            decorator.Mock.VerifyProcessAny(Times.Exactly(2));
+            supplierOutput1.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            supplierOutput1.Mock.VerifyProcessAny(Times.Exactly(2));
+            supplier1.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            supplier1.Mock.VerifyProcessAny(Times.Exactly(2));
+            Assert.AreEqual(context1, context5);
+            Assert.AreEqual(context2, context6);
+            Assert.AreEqual(context3, context7);
+            Assert.AreEqual(context4, context8);
+        }
+
+        [Test]
+        public async Task DecoratorDifferentScopesTest()
+        {
+            var scopeFactory = SetUpScopeFactory();
+
+            var provider1 = scopeFactory.CreateScope().ServiceProvider;
+            var provider2 = scopeFactory.CreateScope().ServiceProvider;
+
+            var broker1 = provider1.Get<IDDBroker>();
+            var channel1 = broker1.CreateAsyncSupplierChannel<IInputs<object>, object>();
+            var channel2 = broker1.CreateSupplierChannel<IInputs<object>, object>();
+            var channel3 = broker1.CreateAsyncSupplierChannel<IInputs>();
+            var channel4 = broker1.CreateSupplierChannel<IInputs>();
+            var decoratorOutput = provider1.Get<MockAllDecorator<IInputs<object>, object>>();
+            var decorator = provider1.Get<MockAllDecorator<IInputs>>();
+            var supplierOutput1 = provider1.Get<MockAllSupplier<IInputs<object>, object>>();
+            var supplier1 = provider1.Get<MockAllSupplier<IInputs>>();
+            ISupplierContext context1 = null;
+            ISupplierContext context2 = null;
+            ISupplierContext context3 = null;
+            ISupplierContext context4 = null;
+            supplierOutput1.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((x, y, z) => context1 = y);
+            supplierOutput1.Mock.SetUpProcessAny()
+                .Callback<IInputs<object>, ISupplierContext>((x, y) => context2 = y);
+            supplier1.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs, ISupplierContext, CancellationToken>((x, y, z) => context3 = y);
+            supplier1.Mock.SetUpProcessAny()
+                .Callback<IInputs, ISupplierContext>((x, y) => context4 = y);
+
+            var broker2 = provider2.Get<IDDBroker>();
+            var supplierOutput2 = provider2.Get<MockAllSupplier<IInputs<object>, object>>();
+            var supplier2 = provider2.Get<MockAllSupplier<IInputs>>();
+            ISupplierContext context5 = null;
+            ISupplierContext context6 = null;
+            ISupplierContext context7 = null;
+            ISupplierContext context8 = null;
+            supplierOutput2.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((x, y, z) => context5 = y);
+            supplierOutput2.Mock.SetUpProcessAny()
+                .Callback<IInputs<object>, ISupplierContext>((x, y) => context6 = y);
+            supplier2.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs, ISupplierContext, CancellationToken>((x, y, z) => context7 = y);
+            supplier2.Mock.SetUpProcessAny()
+                .Callback<IInputs, ISupplierContext>((x, y) => context8 = y);
+
+            await channel1.ProcessAsync();
+            channel2.Process();
+            await channel3.ProcessAsync();
+            channel4.Process();
+            decoratorOutput.Provider = provider2;
+            decorator.Provider = provider2;
+            await channel1.ProcessAsync();
+            channel2.Process();
+            await channel3.ProcessAsync();
+            channel4.Process();
+
+            decoratorOutput.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            decoratorOutput.Mock.VerifyProcessAny(Times.Exactly(2));
+            decorator.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
+            decorator.Mock.VerifyProcessAny(Times.Exactly(2));
+            supplierOutput1.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplierOutput1.Mock.VerifyProcessAny(Times.Once());
+            supplier1.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplier1.Mock.VerifyProcessAny(Times.Once());
+            supplierOutput2.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplierOutput2.Mock.VerifyProcessAny(Times.Once());
+            supplier2.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplier2.Mock.VerifyProcessAny(Times.Once());
+            Assert.AreNotEqual(context1, context5);
+            Assert.AreNotEqual(context2, context6);
+            Assert.AreNotEqual(context3, context7);
+            Assert.AreNotEqual(context4, context8);
+            Assert.AreNotEqual(supplierOutput1, supplierOutput2);
+            Assert.AreNotEqual(supplier2, supplier1);
+            Assert.AreNotEqual(broker1, broker2);
+            Assert.AreEqual(broker1.CorrelationId, broker2.CorrelationId);
+            Assert.AreEqual(context1.CorrelationId, context5.CorrelationId);
+            Assert.AreEqual(context2.CorrelationId, context6.CorrelationId);
+            Assert.AreEqual(context3.CorrelationId, context7.CorrelationId);
+            Assert.AreEqual(context4.CorrelationId, context8.CorrelationId);
+        }
+
+        [Test]
+        public async Task EDecoratorScopesTest()
+        {
+            var mockSupplier = new Mock<IESupplier<IEInputs>>();
+            var mockDecorator = new Mock<IEDecorator<IEInputs>>();
+            var collection = CreateCollection();
+            AddSingleton(collection, mockSupplier);
+            AddSingleton(collection, mockDecorator);
+            provider = BuildServiceProvider(collection, ddCollection
+                .AddQueue(suppliers => suppliers
+                   .AddESupplier<MockESupplier<IEInputs>>())
+                .AddEDecorator<IEInputs, MockEDecorator<IEInputs>>()
+                .BuildSuppliers());
+            var scopeFactory = provider.Get<ISupplierScopeFactory>();
+            this.ddBroker = provider.Get<IDDBroker>();
+            MockEDecorator<IEInputs> decorator1 = null;
+            MockEDecorator<IEInputs> decorator2 = null;
+            IDDBroker broker1 = null;
+            IDDBroker broker2 = null;
+            IDDBroker broker3 = null;
+            IDDBroker broker4 = null;
+            IDDBroker broker5 = null;
+            IDDBroker broker6 = null;
+            int i = 0;
+            var task = new Task(() => { });
+            mockDecorator.SetUpProcessAsyncAny()
+                .Callback<IEInputs, IEDecoratorContext, CancellationToken>((inputs, context, token) =>
+                {
+                    if (i == 0)
+                    {
+                        broker1 = context.DDBroker;
+                        i++;
+                        return;
+                    }
+                    if (i == 2)
+                    {
+                        i++;
+                        decorator1 = context.GetNonePublicField<IEDecorator<IEInputs>>() as MockEDecorator<IEInputs>;
+                        decorator1.Provider = context.DDBroker.GetHiddenPublicProperty<IServiceProvider>();
+                        broker2 = context.DDBroker;
+                    }
+                    else
+                    {
+                        decorator2 = context.GetNonePublicField<IEDecorator<IEInputs>>() as MockEDecorator<IEInputs>;
+                        decorator2.Provider = scopeFactory.CreateScope().ServiceProvider;
+                        broker3 = context.DDBroker;
+                    }
+                });
+            mockSupplier.SetUpProcessAsyncAny()
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
+                {
+                    if (i == 1)
+                    {
+                        i++;
+                        broker4 = context.DDBroker;
+                        return;
+                    }
+                    if (i == 3)
+                    {
+                        broker5 = context.DDBroker;
+                        i++;
+                    }
+                    else
+                    {
+                        broker6 = context.DDBroker;
+                        task.Start();
+                    }
+                });
+
+            await this.ddBroker.Publish<IEInputs>();
+            await this.ddBroker.Publish<IEInputs>();
+            await this.ddBroker.Publish<IEInputs>();
+            await task;
+
+            mockDecorator.VerifyProcessAsyncAny(Times.Exactly(3));
+            mockSupplier.VerifyProcessAsyncAny(Times.Exactly(3));
+            Assert.IsNotNull(decorator1);
+            Assert.AreNotEqual(decorator1, decorator2);
+            Assert.AreEqual(broker1, broker4);
+            Assert.AreEqual(broker1.CorrelationId, broker4.CorrelationId);
+            Assert.AreEqual(broker2, broker5);
+            Assert.AreEqual(broker2.CorrelationId, broker5.CorrelationId);
+            Assert.AreNotEqual(broker1, broker5);
+            Assert.AreNotEqual(broker3, broker6);
+            Assert.AreEqual(broker3.CorrelationId, broker6.CorrelationId);
+            Assert.AreEqual(broker1.CorrelationId, broker6.CorrelationId);
+        }
         [Test]
         public async Task PublishTest()
         {
@@ -658,7 +911,7 @@ namespace DDMedi.Test.Tests
             IDDBroker ddBroker1 = null;
             var task = new Task(() => { });
             mockSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker1 = context.DDBroker;
                     task.Start();
@@ -707,23 +960,23 @@ namespace DDMedi.Test.Tests
             ExceptionEInputs exceptionEInputs = null;
             ExceptionEInputs exceptionEInputs2 = null;
             mockSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<DummyEInputs>, CancellationToken>((context, token) =>
+                .Callback<DummyEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker1 = context.DDBroker;
                     exceptionEInputs2 = new ExceptionEInputs(new Exception());
                     task1.Start();
                 });
             mockSupplier2.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<Dummy2EInputs>, CancellationToken>((context, token) =>
+                .Callback<Dummy2EInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker2 = context.DDBroker;
                     task2.Start();
                 });
             mockSupplier3.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<ExceptionEInputs>, CancellationToken>((context, token) =>
+                .Callback<ExceptionEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker3 = context.DDBroker;
-                    exceptionEInputs = context.Inputs;
+                    exceptionEInputs = inputs;
                     task3.Start();
                 });
 
@@ -784,19 +1037,19 @@ namespace DDMedi.Test.Tests
             var task5 = new Task(() => { });
             var task6 = new Task(() => { });
             mockSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker1 = context.DDBroker;
                     task.Start();
                 });
             mockSupplier2.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<DummyEInputs>, CancellationToken>((context, token) =>
+                .Callback<DummyEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker2 = context.DDBroker;
                     task2.Start();
                 });
             mockDecorator.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker3 = context.DDBroker;
                     if (decCounter++ == 0)
@@ -805,7 +1058,7 @@ namespace DDMedi.Test.Tests
                         task4.Start();
                 });
             mockDecorator2.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<DummyEInputs>, CancellationToken>((context, token) =>
+                .Callback<DummyEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     ddBroker4 = context.DDBroker;
                     if (decCounter2++ == 0)
@@ -858,29 +1111,29 @@ namespace DDMedi.Test.Tests
             var mockSupplier = mockAllSupplier.Mock;
             var task1 = new Task(() => { });
             var task2 = new Task(() => { });
-            ISupplierContext<IInputs<object>> AsyncOutputContext = null;
-            ISupplierContext<IInputs> AsyncContext = null;
-            ISupplierContext<IInputs<object>> OutputContext = null;
-            ISupplierContext<IInputs> Context = null;
-            ISupplierContext<IEInputs> EContext1 = null;
-            ISupplierContext<DummyEInputs> EContext2 = null;
+            ISupplierContext AsyncOutputContext = null;
+            ISupplierContext AsyncContext = null;
+            ISupplierContext OutputContext = null;
+            ISupplierContext Context = null;
+            ISupplierContext EContext1 = null;
+            ISupplierContext EContext2 = null;
             mockAsyncOutputSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => AsyncOutputContext = context);
+                .Callback< IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => AsyncOutputContext = context);
             mockAsyncSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => AsyncContext = context);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => AsyncContext = context);
             mockOutputSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => OutputContext = context);
+                .Callback<IInputs<object>, ISupplierContext >((inputs, context) => OutputContext = context);
             mockSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => Context = context);
+                .Callback<IInputs,ISupplierContext>((inputs, context) => Context = context);
             mockESupplier1.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     EContext1 = context;
                     context.DDBroker.Publish<DummyEInputs>();
                     task1.Start();
                 });
             mockESupplier2.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<DummyEInputs>, CancellationToken>((context, token) =>
+                .Callback<DummyEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     EContext2 = context;
                     task2.Start();
@@ -938,28 +1191,28 @@ namespace DDMedi.Test.Tests
             var mockSupplier = mockAllSupplier.Mock;
             var task1 = new Task(() => { });
             var task2 = new Task(() => { });
-            ISupplierContext<IInputs<object>> AsyncOutputContext = null;
-            ISupplierContext<IInputs> AsyncContext = null;
-            ISupplierContext<IInputs<object>> OutputContext = null;
-            ISupplierContext<IInputs> Context = null;
-            ISupplierContext<IEInputs> EContext1 = null;
-            ISupplierContext<IEInputs> EContext2 = null;
+            ISupplierContext AsyncOutputContext = null;
+            ISupplierContext AsyncContext = null;
+            ISupplierContext OutputContext = null;
+            ISupplierContext Context = null;
+            ISupplierContext EContext1 = null;
+            ISupplierContext EContext2 = null;
             mockAsyncOutputSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs<object>>, CancellationToken>((context, token) => AsyncOutputContext = context);
+                .Callback< IInputs<object>, ISupplierContext, CancellationToken>((inputs, context, token) => AsyncOutputContext = context);
             mockOutputSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs<object>>>(context => OutputContext = context);
+                .Callback< IInputs<object>, ISupplierContext >((inputs, context) => OutputContext = context);
             mockAsyncSupplier.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IInputs>, CancellationToken>((context, token) => AsyncContext = context);
+                .Callback<IInputs, ISupplierContext, CancellationToken>((inputs, context, token) => AsyncContext = context);
             mockSupplier.SetUpProcessAny()
-                .Callback<ISupplierContext<IInputs>>(context => Context = context);
+                .Callback<IInputs, ISupplierContext>((inputs, context) => Context = context);
             mockESupplier1.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     EContext1 = context;
                     task1.Start();
                 });
             mockESupplier2.SetUpProcessAsyncAny()
-                .Callback<ISupplierContext<IEInputs>, CancellationToken>((context, token) =>
+                .Callback<IEInputs, ISupplierContext, CancellationToken>((inputs, context, token) =>
                 {
                     EContext2 = context;
                     task2.Start();

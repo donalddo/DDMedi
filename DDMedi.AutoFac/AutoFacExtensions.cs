@@ -19,7 +19,7 @@ namespace DDMedi.AutoFac
         public SupplierScope(ILifetimeScope scope)
         {
             _scope = scope;
-            ServiceProvider = new SupplierProvider(_scope);
+            ServiceProvider = _scope.Resolve<IServiceProvider>();
         }
 
         public IServiceProvider ServiceProvider { get; private set; }

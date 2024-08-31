@@ -10,20 +10,13 @@ namespace DDMedi.Test.Helper
 
         public static bool HasSupplier<TSupplier>(this object supplierChannel) where TSupplier : class
         {
-            var cachedInstance = supplierChannel.GetHiddenPublicProperty<IBaseContext>();
-            if (cachedInstance != null)
-                return typeof(TSupplier).IsAssignableFrom(cachedInstance.Instance.GetType());
             return supplierChannel.GetNonePublicField<TSupplier>() != null;
         }
         public static TSupplier GetSupplier<TSupplier>(this object supplierChannel) where TSupplier : class
-        => supplierChannel.GetHiddenPublicProperty<IBaseContext>().Instance as TSupplier ??
-            supplierChannel.GetNonePublicField<TSupplier>();
+        => supplierChannel.GetNonePublicField<TSupplier>();
         public static bool HasSupplier<TSupplier>(this object supplierChannel, TSupplier supplier)
             where TSupplier: class
         {
-            var prop = supplierChannel.GetHiddenPublicProperty<IBaseContext>();
-            if(prop != null)
-                return prop.Instance == supplier;
             return supplierChannel.GetNonePublicField<TSupplier>() == supplier;
         }
         public static bool HasProperty<TSupplier>(this object supplierChannel) where TSupplier : class

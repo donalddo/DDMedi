@@ -33,11 +33,11 @@ namespace ExampleApp
     public class WhateverESuppliers
         : IESupplier<DoneEvent>
     {
-        public async Task ProcessAsync(ISupplierContext<DoneEvent> Context, CancellationToken Token = default)
+        public async Task ProcessAsync(DoneEvent inputs, ISupplierContext Context, CancellationToken Token = default)
         {
             await Task.Delay(1000);
             await Context.DDBroker.Publish(new DoneEvent2(Context.CorrelationId)); // DoneEvent2 is fire and forget
-            await Console.Out.WriteLineAsync($"this is {nameof(IESupplier<DoneEvent>)} Count: {Context.Inputs.Counted}");
+            await Console.Out.WriteLineAsync($"this is {nameof(IESupplier<DoneEvent>)} Count: {inputs.Counted}");
             await Task.Delay(2000);
         }
     }
@@ -45,10 +45,10 @@ namespace ExampleApp
         : IESupplier<DoneEvent>
     {
 
-        public async Task ProcessAsync(ISupplierContext<DoneEvent> Context, CancellationToken Token = default)
+        public async Task ProcessAsync(DoneEvent inputs, ISupplierContext Context, CancellationToken Token = default)
         {
             await Task.Delay(800);
-            await Console.Out.WriteLineAsync($"this is {nameof(IESupplier<DoneEvent>)}2 Count: {Context.Inputs.Counted}");
+            await Console.Out.WriteLineAsync($"this is {nameof(IESupplier<DoneEvent>)}2 Count: {inputs.Counted}");
             await Task.Delay(1000);
         }
     }
@@ -56,11 +56,11 @@ namespace ExampleApp
         : IEDecorator<DoneEvent>
     {
 
-        public async Task ProcessAsync(IEDecoratorContext<DoneEvent> Context, CancellationToken Token = default)
+        public async Task ProcessAsync(DoneEvent inputs, IEDecoratorContext Context, CancellationToken Token = default)
         {
-            await Console.Out.WriteLineAsync($"this is {nameof(IEDecorator<DoneEvent>)} Count: {Context.Inputs.Counted}");
-            await this.Next(Context);
-            await Console.Out.WriteLineAsync($"this is {nameof(IEDecorator<DoneEvent>)} Done: {Context.Inputs.Counted}");
+            await Console.Out.WriteLineAsync($"this is {nameof(IEDecorator<DoneEvent>)} Count: {inputs.Counted}");
+            await this.Next(inputs, Context);
+            await Console.Out.WriteLineAsync($"this is {nameof(IEDecorator<DoneEvent>)} Done: {inputs.Counted}");
         }
     }
     public class WhateverSuppliers :
@@ -68,19 +68,19 @@ namespace ExampleApp
         ISupplier<DoCommand>,
         ISupplier<DoCommandObj, object>
     {
-        public void Process(ISupplierContext<DoCommand> Context)
+        public void Process(DoCommand inputs, ISupplierContext Context)
         {
-            Console.Out.WriteLine($"this is {nameof(ISupplier<DoCommand>)} Count: {Context.Inputs.Count}");
+            Console.Out.WriteLine($"this is {nameof(ISupplier<DoCommand>)} Count: {inputs.Count}");
         }
 
-        public object Process(ISupplierContext<DoCommandObj> context)
+        public object Process(DoCommandObj inputs, ISupplierContext context)
         {
             return 5;
         }
 
-        public Task ProcessAsync(ISupplierContext<DoCommand> Context, CancellationToken Token = default)
+        public Task ProcessAsync(DoCommand inputs, ISupplierContext Context, CancellationToken Token = default)
         {
-            return Console.Out.WriteLineAsync($"this is {nameof(IAsyncSupplier<DoCommand>)} Count: {Context.Inputs.Count}");
+            return Console.Out.WriteLineAsync($"this is {nameof(IAsyncSupplier<DoCommand>)} Count: {inputs.Count}");
         }
     }
     public class WhateverDecorators :
@@ -89,23 +89,23 @@ namespace ExampleApp
         IDecorator<DoCommandObj, object>
     {
 
-        public void Process(IDecoratorContext<DoCommand> Context)
+        public void Process(DoCommand inputs, IDecoratorContext Context)
         {
-            Console.Out.WriteLine($"this is {nameof(IDecorator<DoCommand>)} Count: {Context.Inputs.Count}");
-            this.Next(Context);
-            Console.Out.WriteLine($"this is {nameof(IDecorator<DoCommand>)} Done: {Context.Inputs.Count}");
+            Console.Out.WriteLine($"this is {nameof(IDecorator<DoCommand>)} Count: {inputs.Count}");
+            this.Next(inputs, Context);
+            Console.Out.WriteLine($"this is {nameof(IDecorator<DoCommand>)} Done: {inputs.Count}");
         }
 
-        public object Process(IDecoratorContext<DoCommandObj, object> context)
+        public object Process(DoCommandObj inputs, IDecoratorContext<object> context)
         {
-            return this.Next(context);
+            return this.Next(inputs, context);
         }
 
-        public async Task ProcessAsync(IAsyncDecoratorContext<DoCommand> Context, CancellationToken Token = default)
+        public async Task ProcessAsync(DoCommand inputs, IAsyncDecoratorContext Context, CancellationToken Token = default)
         {
-            await Console.Out.WriteLineAsync($"this is {nameof(IAsyncDecorator<DoCommand>)} Count: {Context.Inputs.Count}");
-            await this.Next(Context);
-            await Console.Out.WriteLineAsync($"this is {nameof(IAsyncDecorator<DoCommand>)} Done: {Context.Inputs.Count}");
+            await Console.Out.WriteLineAsync($"this is {nameof(IAsyncDecorator<DoCommand>)} Count: {inputs.Count}");
+            await this.Next(inputs, Context);
+            await Console.Out.WriteLineAsync($"this is {nameof(IAsyncDecorator<DoCommand>)} Done: {inputs.Count}");
         }
     }
     class Program

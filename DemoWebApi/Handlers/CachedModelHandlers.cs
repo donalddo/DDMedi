@@ -53,45 +53,45 @@ namespace DemoWebApi.Handlers
         {
             _cachedModels = cachedModels;
         }
-        public DemoModel Process(IDecoratorContext<GetModelQuery, DemoModel> context)
+        public DemoModel Process(GetModelQuery inputs, IDecoratorContext<DemoModel> context)
         {
-            if (_cachedModels.TryGetValue(context.Inputs.Id, out var model))
+            if (_cachedModels.TryGetValue(inputs.Id, out var model))
                 return model;
-            model = this.Next(context);
-            _cachedModels.TryAdd(context.Inputs.Id, model);
+            model = this.Next(inputs, context);
+            _cachedModels.TryAdd(inputs.Id, model);
             return model;
         }
 
-        public void Process(ISupplierContext<PurgeCachedModelsCommand> context)
+        public void Process(PurgeCachedModelsCommand inputs, ISupplierContext context)
         {
             _cachedModels.Clear();
         }
 
-        public async Task<DemoModel> ProcessAsync(IAsyncDecoratorContext<GetModelQuery, DemoModel> context, CancellationToken token = default)
+        public async Task<DemoModel> ProcessAsync(GetModelQuery inputs, IAsyncDecoratorContext<DemoModel> context, CancellationToken token = default)
         {
-            if (_cachedModels.TryGetValue(context.Inputs.Id, out var model))
+            if (_cachedModels.TryGetValue(inputs.Id, out var model))
                 return model;
-            model = await this.Next(context);
-            _cachedModels.TryAdd(context.Inputs.Id, model);
+            model = await this.Next(inputs, context);
+            _cachedModels.TryAdd(inputs.Id, model);
             return model;
         }
-        public Task ProcessAsync(ISupplierContext<ModelAddedEvent> context, CancellationToken token = default)
+        public Task ProcessAsync(ModelAddedEvent inputs, ISupplierContext context, CancellationToken token = default)
         {
-            if (!_cachedModels.TryAdd(context.Inputs.Id, new DemoModel { Id = context.Inputs.Id, Count = context.Inputs.Count }))
+            if (!_cachedModels.TryAdd(inputs.Id, new DemoModel { Id = inputs.Id, Count = inputs.Count }))
                 throw new NotSupportedException();
             return Task.CompletedTask;
         }
-        public Task ProcessAsync(ISupplierContext<ModelUpdatedEvent> context, CancellationToken token = default)
+        public Task ProcessAsync(ModelUpdatedEvent inputs, ISupplierContext context, CancellationToken token = default)
         {
-            if (!_cachedModels.TryGetValue(context.Inputs.Id, out var model))
+            if (!_cachedModels.TryGetValue(inputs.Id, out var model))
                 throw new KeyNotFoundException();
-            model.Count = context.Inputs.Count;
+            model.Count = inputs.Count;
             return Task.CompletedTask;
         }
 
-        public Task ProcessAsync(ISupplierContext<ModelDeletedEvent> context, CancellationToken token = default)
+        public Task ProcessAsync(ModelDeletedEvent inputs, ISupplierContext context, CancellationToken token = default)
         {
-            if (!_cachedModels.TryRemove(context.Inputs.Id, out _))
+            if (!_cachedModels.TryRemove(inputs.Id, out _))
                 throw new KeyNotFoundException();
             return Task.CompletedTask;
         }

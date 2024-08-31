@@ -14,9 +14,9 @@ namespace DDMedi.Test.Mocks
             Mock = new Mock<ISupplier<TInputs>>();
         }
 
-        public void Process(ISupplierContext<TInputs> context)
+        public void Process(TInputs inputs, ISupplierContext context)
         {
-            Mock.Object.Process(context);
+            Mock.Object.Process(inputs, context);
         }
     }
     internal class MockAsyncSupplier<TInputs> :
@@ -29,9 +29,9 @@ namespace DDMedi.Test.Mocks
             Mock = new Mock<IAsyncSupplier<TInputs>>();
         }
 
-        public Task ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token)
+        public Task ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token)
         {
-            return Mock.Object.ProcessAsync(context, token);
+            return Mock.Object.ProcessAsync(inputs, context, token);
         }
     }
     internal class MockESupplier<TEInputs> :
@@ -43,9 +43,9 @@ namespace DDMedi.Test.Mocks
         {
             Mock = mock;
         }
-        public Task ProcessAsync(ISupplierContext<TEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TEInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
-            return Mock.Object.ProcessAsync(context, token);
+            return Mock.Object.ProcessAsync(inputs, context, token);
         }
     }
     internal class MockSupplier<TInputs,TOutput> :
@@ -58,9 +58,9 @@ namespace DDMedi.Test.Mocks
             Mock = new Mock<ISupplier<TInputs, TOutput>>();
         }
 
-        public virtual TOutput Process(ISupplierContext<TInputs> context)
+        public virtual TOutput Process(TInputs inputs, ISupplierContext context)
         {
-            return Mock.Object.Process(context);
+            return Mock.Object.Process(inputs, context);
         }
     }
     internal class MockAsyncSupplier<TInputs, TOutput> :
@@ -73,9 +73,9 @@ namespace DDMedi.Test.Mocks
             Mock = new Mock<IAsyncSupplier<TInputs, TOutput>>();
         }
 
-        public virtual Task<TOutput> ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token = default)
+        public virtual Task<TOutput> ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
-            return Mock.Object.ProcessAsync(context, token);
+            return Mock.Object.ProcessAsync(inputs, context, token);
         }
     }
     internal class MockAllSupplier<TInputs> :
@@ -91,14 +91,14 @@ namespace DDMedi.Test.Mocks
             MockAsync = new Mock<IAsyncSupplier<TInputs>>();
         }
 
-        public void Process(ISupplierContext<TInputs> context)
+        public void Process(TInputs inputs, ISupplierContext context)
         {
-            Mock.Object.Process(context);
+            Mock.Object.Process(inputs, context);
         }
 
-        public Task ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token)
+        public Task ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token)
         {
-            return MockAsync.Object.ProcessAsync(context, token);
+            return MockAsync.Object.ProcessAsync(inputs, context, token);
         }
     }
     internal class MockAllSupplier<TInputs, TOutput> :
@@ -114,14 +114,14 @@ namespace DDMedi.Test.Mocks
             MockAsync = new Mock<IAsyncSupplier<TInputs, TOutput>>();
         }
 
-        public TOutput Process(ISupplierContext<TInputs> context)
+        public TOutput Process(TInputs inputs, ISupplierContext context)
         {
-            return Mock.Object.Process(context);
+            return Mock.Object.Process(inputs, context);
         }
 
-        public Task<TOutput> ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token)
+        public Task<TOutput> ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token)
         {
-            return MockAsync.Object.ProcessAsync(context, token);
+            return MockAsync.Object.ProcessAsync(inputs, context, token);
         }
     }
 }

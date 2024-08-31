@@ -1,24 +1,41 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DDMedi
 {
     public static class DecoratorContextExtensions
     {
-        public static Task<R> Next<T, R>(this IAsyncDecorator<T, R> currentDecorator, IAsyncDecoratorContext<T, R> context, CancellationToken token = default)
+        public static Task<R> Next<T, R>(this IAsyncDecorator<T,R> currentDecorator, T inputs, IAsyncDecoratorContext<R> context, CancellationToken token = default)
             where T : IInputs<R> =>
-            context.Next(token);
-        public static Task Next<T>(this IAsyncDecorator<T> currentDecorator, IAsyncDecoratorContext<T> context, CancellationToken token = default)
+            context.Next(inputs, token);
+        public static Task Next<T>(this IAsyncDecorator<T> currentDecorator, T inputs, IAsyncDecoratorContext context, CancellationToken token = default)
             where T : IInputs =>
-            context.Next(token);
-        public static R Next<T, R>(this IDecorator<T, R> currentDecorator, IDecoratorContext<T, R> context)
+            context.Next(inputs, token);
+        public static R Next<T, R>(this IDecorator<T, R> currentDecorator, T inputs, IDecoratorContext<R> context)
             where T : IInputs<R> =>
-            context.Next();
-        public static void Next<T>(this IDecorator<T> currentDecorator, IDecoratorContext<T> context)
+            context.Next(inputs);
+        public static void Next<T>(this IDecorator<T> currentDecorator, T inputs, IDecoratorContext context)
             where T : IInputs =>
-            context.Next();
-        public static Task Next<T>(this IEDecorator<T> currentDecorator, IEDecoratorContext<T> context, CancellationToken token = default)
+            context.Next(inputs);
+        public static Task Next<T>(this IEDecorator<T> currentDecorator, T inputs, IEDecoratorContext context, CancellationToken token = default)
             where T : IEInputs =>
-            context.Next(token);
+            context.Next(inputs, token);
+
+        public static Task<R> Next<T, R>(this IAsyncDecorator<T, R> currentDecorator, T inputs, IAsyncDecoratorContext<R> context, IServiceProvider provider, CancellationToken token = default)
+            where T : IInputs<R> =>
+            context.Next(inputs, provider, token);
+        public static Task Next<T>(this IAsyncDecorator<T> currentDecorator, T inputs, IAsyncDecoratorContext context, IServiceProvider provider, CancellationToken token = default)
+            where T : IInputs =>
+            context.Next(inputs, provider, token);
+        public static R Next<T, R>(this IDecorator<T, R> currentDecorator, T inputs, IDecoratorContext<R> context, IServiceProvider provider)
+            where T : IInputs<R> =>
+            context.Next(inputs, provider);
+        public static void Next<T>(this IDecorator<T> currentDecorator, T inputs, IDecoratorContext context, IServiceProvider provider)
+            where T : IInputs =>
+            context.Next(inputs, provider);
+        public static Task Next<T>(this IEDecorator<T> currentDecorator, T inputs, IEDecoratorContext context, IServiceProvider provider, CancellationToken token = default)
+            where T : IEInputs =>
+            context.Next(inputs, provider, token);
     }
 }

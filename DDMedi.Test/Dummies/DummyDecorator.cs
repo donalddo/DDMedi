@@ -7,12 +7,12 @@ namespace DDMedi.Test.Dummies
     internal abstract class InvalidDecorator :
         IDecorator<DummyInputs>
     {
-        public abstract void Process(IDecoratorContext<DummyInputs> context);
+        public abstract void Process(DummyInputs inputs, IDecoratorContext context);
     }
     internal abstract class InvalidDecorator2<T> :
         IDecorator<T> where T : IInputs
     {
-        public abstract void Process(IDecoratorContext<T> context);
+        public abstract void Process(T inputs, IDecoratorContext context);
     }
     internal class SuperDummySupplier :
         IAsyncSupplier<IInputs>,
@@ -20,22 +20,22 @@ namespace DDMedi.Test.Dummies
         IAsyncDecorator<IInputs>,
         IEDecorator<IEInputs>
     {
-        public Task ProcessAsync(ISupplierContext<IInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(IInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             return Task.CompletedTask;
         }
 
-        public Task ProcessAsync(ISupplierContext<IEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(IEInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             return Task.CompletedTask;
         }
 
-        public Task ProcessAsync(IAsyncDecoratorContext<IInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(IInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default)
         {
             return Task.CompletedTask;
         }
 
-        public Task ProcessAsync(IEDecoratorContext<IEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(IEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
             return Task.CompletedTask;
         }
@@ -52,34 +52,34 @@ namespace DDMedi.Test.Dummies
         public bool Called { get; set; }
         public bool AsyncOutputCalled { get; set; }
         public bool OutputCalled { get; set; }
-        public DummyOutput Process(IDecoratorContext<DummyInputs<DummyOutput>, DummyOutput> context)
+        public DummyOutput Process(DummyInputs<DummyOutput> inputs, IDecoratorContext<DummyOutput> context)
         {
             OutputCalled = true;
-            return this.Next(context);
+            return this.Next(inputs, context);
         }
 
-        public void Process(IDecoratorContext<DummyInputs> context)
+        public void Process(DummyInputs inputs, IDecoratorContext context)
         {
             Called = true;
-            this.Next(context);
+            this.Next(inputs, context);
         }
 
-        public Task ProcessAsync(IEDecoratorContext<DummyEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
             EInputsCalled = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
 
-        public Task<DummyOutput> ProcessAsync(IAsyncDecoratorContext<DummyInputs<DummyOutput>, DummyOutput> context, CancellationToken token = default)
+        public Task<DummyOutput> ProcessAsync(DummyInputs<DummyOutput>  inputs, IAsyncDecoratorContext<DummyOutput> context, CancellationToken token = default)
         {
             AsyncOutputCalled = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
 
-        public Task ProcessAsync(IAsyncDecoratorContext<DummyInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default)
         {
             AsyncCalled = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
 
@@ -91,16 +91,16 @@ namespace DDMedi.Test.Dummies
         public bool Called { get; set; }
         public bool AsyncCalled { get; set; }
 
-        public void Process(IDecoratorContext<T> context)
+        public void Process(T inputs, IDecoratorContext context)
         {
             Called = true;
-            this.Next(context);
+            this.Next(inputs, context);
         }
 
-        public Task ProcessAsync(IAsyncDecoratorContext<T> context, CancellationToken token = default)
+        public Task ProcessAsync(T inputs, IAsyncDecoratorContext context, CancellationToken token = default)
         {
             AsyncCalled = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
 
@@ -111,64 +111,64 @@ namespace DDMedi.Test.Dummies
     {
         public bool Called { get; set; }
         public bool AsyncCalled { get; set; }
-        public R Process(IDecoratorContext<T, R> context)
+        public R Process(T inputs, IDecoratorContext<R> context)
         {
             Called = true;
-            return this.Next(context);
+            return this.Next(inputs, context);
         }
 
-        public Task<R> ProcessAsync(IAsyncDecoratorContext<T, R> context, CancellationToken token = default)
+        public Task<R> ProcessAsync(T inputs, IAsyncDecoratorContext<R> context, CancellationToken token = default)
         {
             AsyncCalled = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class DummyEInputsDecorator :
         IEDecorator<DummyEInputs>
     {
-        public Task ProcessAsync(IEDecoratorContext<DummyEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class DummyDecorator :
         IDecorator<DummyInputs>
     {
         public bool Called { get; set; }
-        public void Process(IDecoratorContext<DummyInputs> context)
+        public void Process(DummyInputs inputs, IDecoratorContext context)
         {
             Called = true;
-            this.Next(context);
+            this.Next(inputs, context);
         }
     }
     internal class DummyAsyncDecorator :
         IAsyncDecorator<DummyInputs>
     {
         public bool Called { get; set; }
-        public Task ProcessAsync(IAsyncDecoratorContext<DummyInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default)
         {
             Called = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class DummyOutputDecorator :
         IDecorator<DummyInputs<DummyOutput>, DummyOutput>
     {
         public bool Called { get; set; }
-        public DummyOutput Process(IDecoratorContext<DummyInputs<DummyOutput>, DummyOutput> context)
+        public DummyOutput Process(DummyInputs<DummyOutput>  inputs, IDecoratorContext<DummyOutput> context)
         {
             Called = true;
-            return this.Next(context);
+            return this.Next(inputs, context);
         }
     }
     internal class DummyAsyncOutputDecorator :
         IAsyncDecorator<DummyInputs<DummyOutput>, DummyOutput>
     {
         public bool Called { get; set; }
-        public Task<DummyOutput> ProcessAsync(IAsyncDecoratorContext<DummyInputs<DummyOutput>, DummyOutput> context, CancellationToken token = default)
+        public Task<DummyOutput> ProcessAsync(DummyInputs<DummyOutput>  inputs, IAsyncDecoratorContext<DummyOutput> context, CancellationToken token = default)
         {
             Called = true;
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
 
@@ -177,21 +177,21 @@ namespace DDMedi.Test.Dummies
         where TInputs : IInputs<TOutput>
     {
         public bool Called { get; set; }
-        public TOutput Process(IDecoratorContext<TInputs,TOutput> context = null)
+        public TOutput Process(TInputs inputs, IDecoratorContext<TOutput> context = null)
         {
             Called = true;
             Debug.WriteLine($"{nameof(DummyDecorator<IInputs<TOutput>, TOutput>)} {nameof(TOutput)} {nameof(Process)} called");
-            return this.Next(context);
+            return this.Next(inputs, context);
         }
     }
     internal class DummyEDecorator<TEInputs> :
         IEDecorator<TEInputs>
         where TEInputs : IEInputs
     {
-        public Task ProcessAsync(IEDecoratorContext<TEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{nameof(DummyEDecorator<IEInputs>)} {nameof(ProcessAsync)} called");
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class Dummy2EDecorator<TEInputs> :
@@ -199,10 +199,10 @@ namespace DDMedi.Test.Dummies
         where TEInputs : IEInputs
     {
 
-        public Task ProcessAsync(IEDecoratorContext<TEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{nameof(DummyEDecorator<IEInputs>)} {nameof(ProcessAsync)} called");
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class DummyDecorator<TInputs> :
@@ -210,11 +210,11 @@ namespace DDMedi.Test.Dummies
         where TInputs : IInputs
     {
         public bool Called { get; set; }
-        public void Process(IDecoratorContext<TInputs> context)
+        public void Process(TInputs inputs, IDecoratorContext context)
         {
             Called = true;
             Debug.WriteLine($"{nameof(DummyDecorator<IInputs>)} {nameof(Process)} called");
-            this.Next(context);
+            this.Next(inputs, context);
         }
     }
     internal class DummyAsyncDecorator<TInputs> :
@@ -222,11 +222,11 @@ namespace DDMedi.Test.Dummies
         where TInputs : IInputs
     {
         public bool Called { get; set; }
-        public Task ProcessAsync(IAsyncDecoratorContext<TInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default)
         {
             Called = true;
             Debug.WriteLine($"{nameof(DummyDecorator<IInputs>)} {nameof(ProcessAsync)} called");
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
     internal class DummyAsyncDecorator<TInputs, TOutput> :
@@ -234,11 +234,11 @@ namespace DDMedi.Test.Dummies
         where TInputs : IInputs<TOutput>
     {
         public bool Called { get; set; }
-        public Task<TOutput> ProcessAsync(IAsyncDecoratorContext<TInputs, TOutput> context, CancellationToken token = default)
+        public Task<TOutput> ProcessAsync(TInputs inputs, IAsyncDecoratorContext<TOutput> context, CancellationToken token = default)
         {
             Called = true;
             Debug.WriteLine($"{nameof(DummyDecorator<IInputs>)} {nameof(ProcessAsync)} called");
-            return this.Next(context, token);
+            return this.Next(inputs, context, token);
         }
     }
 }

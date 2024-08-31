@@ -77,35 +77,23 @@ namespace DDMedi
         }
         public IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>
         {
-            var descriptor = _asyncSupplierOutputDic.GetValueOrDefault(typeof(T))?[0] ??
-                throw new NotImplementedException();
-            if(descriptor.Next == null)
-                return new AsyncSupplierChannel<T, R>(ddBroker, descriptor);
-            return new AsyncDecoratorChannel<T, R>(ddBroker, descriptor);
+            var descriptor = _asyncSupplierOutputDic.GetValueOrDefault(typeof(T))?[0];
+            return ddBroker.CreateAsyncSupplierChannel<T, R>(descriptor);
         }
         public IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs
         {
-            var descriptor = _asyncSupplierDic.GetValueOrDefault(typeof(T))?[0] ??
-                throw new NotImplementedException();
-            if (descriptor.Next == null)
-                return new AsyncSupplierChannel<T>(ddBroker, descriptor);
-            return new AsyncDecoratorChannel<T>(ddBroker, descriptor);
+            var descriptor = _asyncSupplierDic.GetValueOrDefault(typeof(T))?[0];
+            return ddBroker.CreateAsyncSupplierChannel<T>(descriptor);
         }
         public ISupplierChannel<T, R> CreateSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>
         {
-            var descriptor = _supplierOutputDic.GetValueOrDefault(typeof(T))?[0] ??
-                throw new NotImplementedException();
-            if (descriptor.Next == null)
-                return new SupplierChannel<T, R>(ddBroker, descriptor);
-            return new DecoratorChannel<T, R>(ddBroker, descriptor);
+            var descriptor = _supplierOutputDic.GetValueOrDefault(typeof(T))?[0];
+            return ddBroker.CreateSupplierChannel<T, R>(descriptor);
         }
         public ISupplierChannel<T> CreateSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs
         {
-            var descriptor = _supplierDic.GetValueOrDefault(typeof(T))?[0] ??
-              throw new NotImplementedException();
-            if (descriptor.Next == null)
-                return new SupplierChannel<T>(ddBroker, descriptor);
-            return new DecoratorChannel<T>(ddBroker, descriptor);
+            var descriptor = _supplierDic.GetValueOrDefault(typeof(T))?[0];
+            return ddBroker.CreateSupplierChannel<T>(descriptor);
         }
         public override void Dispose()
         {

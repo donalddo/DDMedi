@@ -7,26 +7,26 @@ namespace DDMedi
     public interface IAsyncDecorator<TInputs, TOutput> : IDecorator
         where TInputs : IInputs<TOutput>
     {
-        Task<TOutput> ProcessAsync(IAsyncDecoratorContext<TInputs, TOutput> context, CancellationToken token = default);
+        Task<TOutput> ProcessAsync(TInputs inputs, IAsyncDecoratorContext<TOutput> context, CancellationToken token = default);
     }
     public interface IAsyncDecorator<TInputs> : IDecorator
         where TInputs : IInputs
     {
-        Task ProcessAsync(IAsyncDecoratorContext<TInputs> context, CancellationToken token = default);
+        Task ProcessAsync(TInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default);
     }
     public interface IDecorator<TInputs, TOutput> : IDecorator
         where TInputs : IInputs<TOutput>
     {
-        TOutput Process(IDecoratorContext<TInputs, TOutput> context);
+        TOutput Process(TInputs inputs, IDecoratorContext<TOutput> context);
     }
     public interface IDecorator<TInputs> : IDecorator
         where TInputs : IInputs
     {
-        void Process(IDecoratorContext<TInputs> context);
+        void Process(TInputs inputs, IDecoratorContext context);
     }
     public interface IEDecorator<TEInputs> : IDecorator
         where TEInputs : IEInputs
     {
-        Task ProcessAsync(IEDecoratorContext<TEInputs> context, CancellationToken token = default);
+        Task ProcessAsync(TEInputs inputs, IEDecoratorContext context, CancellationToken token = default);
     }
 }

@@ -16,57 +16,51 @@ namespace DDMedi.UnitTest.Helper
         public static ISetup<IDDBroker> SetUpProcessAny<TInputs>(this Mock<IDDBroker> ddBroker) where TInputs : IInputs
         => ddBroker.Setup(item => item.Process(It.IsAny<TInputs>()));
 
-        public static void SetUpDDBrokerAndContext<TInputs>(out Mock<IDDBroker> ddBroker, out Mock<ISupplierContext<TInputs>> context)
+        public static void SetUpDDBrokerAndContext(out Mock<IDDBroker> ddBroker, out Mock<ISupplierContext> context)
         {
-            context = new Mock<ISupplierContext<TInputs>>();
+            context = new Mock<ISupplierContext>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
         }
-        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<ISupplierContext<TInputs>> context)
+        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<ISupplierContext> context)
         {
             SetUpDDBrokerAndContext(out ddBroker, out context);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
         
-        public static void SetUpDDBrokerAndContext<TInputs, TOutput>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IAsyncDecoratorContext<TInputs, TOutput>> context)
+        public static void SetUpDDBrokerAndContext<TInputs, TOutput>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IAsyncDecoratorContext<TOutput>> context)
             where TInputs : IInputs<TOutput>
         {
-            context = new Mock<IAsyncDecoratorContext<TInputs, TOutput>>();
+            context = new Mock<IAsyncDecoratorContext<TOutput>>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
-        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IAsyncDecoratorContext<TInputs>> context)
+        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IAsyncDecoratorContext> context)
             where TInputs : IInputs
         {
-            context = new Mock<IAsyncDecoratorContext<TInputs>>();
+            context = new Mock<IAsyncDecoratorContext>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
-        public static void SetUpDDBrokerAndContext<TInputs, TOutput>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IDecoratorContext<TInputs, TOutput>> context)
+        public static void SetUpDDBrokerAndContext<TInputs, TOutput>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IDecoratorContext<TOutput>> context)
             where TInputs : IInputs<TOutput>
         {
-            context = new Mock<IDecoratorContext<TInputs, TOutput>>();
+            context = new Mock<IDecoratorContext<TOutput>>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
-        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IDecoratorContext<TInputs>> context)
+        public static void SetUpDDBrokerAndContext<TInputs>(this TInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IDecoratorContext> context)
             where TInputs : IInputs
         {
-            context = new Mock<IDecoratorContext<TInputs>>();
+            context = new Mock<IDecoratorContext>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
-        public static void SetUpDDBrokerAndContext<TEInputs>(this TEInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IEDecoratorContext<TEInputs>> context)
+        public static void SetUpDDBrokerAndContext<TEInputs>(this TEInputs inputs, out Mock<IDDBroker> ddBroker, out Mock<IEDecoratorContext> context)
             where TEInputs : IEInputs
         {
-            context = new Mock<IEDecoratorContext<TEInputs>>();
+            context = new Mock<IEDecoratorContext>();
             ddBroker = new Mock<IDDBroker>();
             context.Setup(e => e.DDBroker).Returns(ddBroker.Object);
-            context.Setup(e => e.Inputs).Returns(inputs);
         }
 
         public static Mock<IAsyncSupplierChannel<TInputs, TOutput>> SetUpAsyncSupplierChannelAny<TInputs, TOutput>(this Mock<IDDBroker> ddBroker, TOutput output) where TInputs : IInputs<TOutput>
@@ -98,15 +92,15 @@ namespace DDMedi.UnitTest.Helper
             return mockSupplierChannel;
         }
 
-        public static ISetup<IAsyncDecoratorContext<TInputs,TOutput>,Task<TOutput>> SetUpNextAny<TInputs, TOutput>(this IAsyncDecorator<TInputs, TOutput> decorator, Mock<IAsyncDecoratorContext<TInputs, TOutput>> context) where TInputs : IInputs<TOutput>
-        => context.Setup(item => item.Next( It.IsAny<CancellationToken>()));
-        public static ISetup<IAsyncDecoratorContext<TInputs>, Task> SetUpNextAny<TInputs>(this IAsyncDecorator<TInputs> decorator, Mock<IAsyncDecoratorContext<TInputs>> context) where TInputs : IInputs
-        => context.Setup(item => item.Next(It.IsAny<CancellationToken>()));
-        public static ISetup<IDecoratorContext<TInputs, TOutput>, TOutput> SetUpNextAny<TInputs, TOutput>(this IDecorator<TInputs, TOutput> decorator, Mock<IDecoratorContext<TInputs, TOutput>> context) where TInputs : IInputs<TOutput>
-        => context.Setup(item => item.Next());
-        public static ISetup<IDecoratorContext<TInputs>> SetUpNextAny<TInputs>(this IDecorator<TInputs> decorator, Mock<IDecoratorContext<TInputs>> context) where TInputs : IInputs
-        => context.Setup(item => item.Next());
-        public static ISetup<IEDecoratorContext<TEInputs>, Task> SetUpNextAny<TEInputs>(this IEDecorator<TEInputs> decorator, Mock<IEDecoratorContext<TEInputs>> context) where TEInputs : IEInputs
-        => context.Setup(item => item.Next(It.IsAny<CancellationToken>()));
+        public static ISetup<IAsyncDecoratorContext<TOutput>,Task<TOutput>> SetUpNextAny<TInputs, TOutput>(this IAsyncDecorator<TInputs, TOutput> decorator, Mock<IAsyncDecoratorContext<TOutput>> context) where TInputs : IInputs<TOutput>
+        => context.Setup(item => item.Next(It.IsAny<IInputs<TOutput>>(), It.IsAny<CancellationToken>()));
+        public static ISetup<IAsyncDecoratorContext, Task> SetUpNextAny<TInputs>(this IAsyncDecorator<TInputs> decorator, Mock<IAsyncDecoratorContext> context) where TInputs : IInputs
+        => context.Setup(item => item.Next(It.IsAny<IInputs>(), It.IsAny<CancellationToken>()));
+        public static ISetup<IDecoratorContext<TOutput>, TOutput> SetUpNextAny<TInputs, TOutput>(this IDecorator<TInputs, TOutput> decorator, Mock<IDecoratorContext<TOutput>> context) where TInputs : IInputs<TOutput>
+        => context.Setup(item => item.Next(It.IsAny<IInputs<TOutput>>()));
+        public static ISetup<IDecoratorContext> SetUpNextAny<TInputs>(this IDecorator<TInputs> decorator, Mock<IDecoratorContext> context) where TInputs : IInputs
+        => context.Setup(item => item.Next(It.IsAny<IInputs>()));
+        public static ISetup<IEDecoratorContext, Task> SetUpNextAny<TEInputs>(this IEDecorator<TEInputs> decorator, Mock<IEDecoratorContext> context) where TEInputs : IEInputs
+        => context.Setup(item => item.Next(It.IsAny<IEInputs>(), It.IsAny<CancellationToken>()));
     }
 }

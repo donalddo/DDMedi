@@ -32,15 +32,15 @@ namespace DDMedi.UnitTest.Helper
         public static void VerifyProcessAny<TInputs>(this Mock<ISupplierChannel<TInputs>> channel, Times times) where TInputs : IInputs
         => channel.Verify(item => item.Process(It.IsAny<TInputs>()), times);
 
-        public static void VerifyNextAny<TInputs, TOutput>(this IAsyncDecorator<TInputs, TOutput> decorator, Mock<IAsyncDecoratorContext<TInputs, TOutput>> context, Times times) where TInputs : IInputs<TOutput>
-        => context.Verify(item => item.Next(It.IsAny<CancellationToken>()), times);
-        public static void VerifyNextAny<TInputs>(this IAsyncDecorator<TInputs> decorator, Mock<IAsyncDecoratorContext<TInputs>> context, Times times) where TInputs : IInputs
-        => context.Verify(item => item.Next(It.IsAny<CancellationToken>()), times);
-        public static void VerifyNextAny<TInputs, TOutput>(this IDecorator<TInputs, TOutput> decorator, Mock<IDecoratorContext<TInputs, TOutput>> context, Times times) where TInputs : IInputs<TOutput>
-        => context.Verify(item => item.Next(), times);
-        public static void VerifyNextAny<TInputs>(this IDecorator<TInputs> decorator, Mock<IDecoratorContext<TInputs>> context, Times times) where TInputs : IInputs
-        => context.Verify(item => item.Next(), times);
-        public static void VerifyNextAny<TEInputs>(this IEDecorator<TEInputs> decorator, Mock<IEDecoratorContext<TEInputs>> context, Times times) where TEInputs : IEInputs
-        => context.Verify(item => item.Next(It.IsAny<CancellationToken>()), times);
+        public static void VerifyNextAny<TInputs, TOutput>(this IAsyncDecorator<TInputs, TOutput> decorator, Mock<IAsyncDecoratorContext<TOutput>> context, Times times) where TInputs : IInputs<TOutput>
+        => context.Verify(item => item.Next(It.IsAny<IInputs<TOutput>>(), It.IsAny<CancellationToken>()), times);
+        public static void VerifyNextAny<TInputs>(this IAsyncDecorator<TInputs> decorator, Mock<IAsyncDecoratorContext> context, Times times) where TInputs : IInputs
+        => context.Verify(item => item.Next(It.IsAny<IInputs>(), It.IsAny<CancellationToken>()), times);
+        public static void VerifyNextAny<TInputs, TOutput>(this IDecorator<TInputs, TOutput> decorator, Mock<IDecoratorContext<TOutput>> context, Times times) where TInputs : IInputs<TOutput>
+        => context.Verify(item => item.Next(It.IsAny<IInputs<TOutput>>()), times);
+        public static void VerifyNextAny<TInputs>(this IDecorator<TInputs> decorator, Mock<IDecoratorContext> context, Times times) where TInputs : IInputs
+        => context.Verify(item => item.Next(It.IsAny<IInputs>()), times);
+        public static void VerifyNextAny<TEInputs>(this IEDecorator<TEInputs> decorator, Mock<IEDecoratorContext> context, Times times) where TEInputs : IEInputs
+        => context.Verify(item => item.Next(It.IsAny<IEInputs>(), It.IsAny<CancellationToken>()), times);
     }
 }

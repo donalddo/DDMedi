@@ -22,25 +22,25 @@ namespace DDMedi.Test.Tests
         public async Task SingleDecoratorTest()
         {
             var asyncOutputDecorator = new MockAsyncDecorator<IInputs<object>, object>();
-            var mockAsyncOutputContext = new Mock<IAsyncDecoratorContext<IInputs<object>, object>>();
+            var mockAsyncOutputContext = new Mock<IAsyncDecoratorContext<object>>();
 
             var asyncDecorator = new MockAsyncDecorator<IInputs>();
-            var mockAsyncContext = new Mock<IAsyncDecoratorContext<IInputs>>();
+            var mockAsyncContext = new Mock<IAsyncDecoratorContext>();
 
             var outputDecorator = new MockDecorator<IInputs<object>, object>();
-            var mockOutputContext = new Mock<IDecoratorContext<IInputs<object>, object>>();
+            var mockOutputContext = new Mock<IDecoratorContext<object>>();
 
             var decorator = new MockDecorator<IInputs>();
-            var mockContext = new Mock<IDecoratorContext<IInputs>>();
+            var mockContext = new Mock<IDecoratorContext>();
 
             var eDecorator = new MockEDecorator<IEInputs>(new Mock<IEDecorator<IEInputs>>());
-            var mockEInputsContext = new Mock<IEDecoratorContext<IEInputs>>();
+            var mockEInputsContext = new Mock<IEDecoratorContext>();
 
-            await asyncOutputDecorator.ProcessAsync(mockAsyncOutputContext.Object);
-            await asyncDecorator.ProcessAsync(mockAsyncContext.Object);
-            outputDecorator.Process(mockOutputContext.Object);
-            decorator.Process(mockContext.Object);
-            await eDecorator.ProcessAsync(mockEInputsContext.Object);
+            await asyncOutputDecorator.ProcessAsync(It.IsAny<IInputs<object>>(), mockAsyncOutputContext.Object);
+            await asyncDecorator.ProcessAsync(It.IsAny<IInputs>(), mockAsyncContext.Object);
+            outputDecorator.Process(It.IsAny<IInputs<object>>(), mockOutputContext.Object);
+            decorator.Process(It.IsAny<IInputs>(), mockContext.Object);
+            await eDecorator.ProcessAsync(It.IsAny<IEInputs>(), mockEInputsContext.Object);
 
             asyncOutputDecorator.VerifyNextAny(mockAsyncOutputContext, Times.Once());
             asyncDecorator.VerifyNextAny(mockAsyncContext, Times.Once());

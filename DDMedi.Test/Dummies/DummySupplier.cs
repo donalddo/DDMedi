@@ -17,7 +17,7 @@ namespace DDMedi.Test.Dummies
     internal abstract class InvalidSupplier2 :
         IAsyncSupplier<DummyInputs>
     {
-        public Task ProcessAsync(ISupplierContext<DummyInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
@@ -26,7 +26,7 @@ namespace DDMedi.Test.Dummies
     internal abstract class InvalidESupplier2 :
         IESupplier<DummyEInputs>
     {
-        public Task ProcessAsync(ISupplierContext<DummyEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyEInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace DDMedi.Test.Dummies
     internal class Dummy2Supplier :
         IAsyncSupplier<DummyInputs>
     {
-        public Task ProcessAsync(ISupplierContext<DummyInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{GetType().Name} {nameof(DummyInputs)} {nameof(ProcessAsync)} Called");
             return Task.CompletedTask;
@@ -57,34 +57,34 @@ namespace DDMedi.Test.Dummies
             return new object();
         }
 
-        public DummyOutput Process(ISupplierContext<DummyInputs<DummyOutput>> context)
+        public DummyOutput Process(DummyInputs<DummyOutput> inputs, ISupplierContext context)
         {
             OutputCalled = true;
             Debug.WriteLine($"{GetType().Name} {nameof(DummyInputs<DummyOutput>)} {nameof(Process)} Called");
             return null;
         }
 
-        public void Process(ISupplierContext<DummyInputs> context)
+        public void Process(DummyInputs inputs, ISupplierContext context)
         {
             Called = true;
             Debug.WriteLine($"{GetType().Name} {nameof(DummyInputs)} {nameof(Process)} Called");
         }
 
-        public Task<DummyOutput> ProcessAsync(ISupplierContext<DummyInputs<DummyOutput>> context, CancellationToken token = default)
+        public Task<DummyOutput> ProcessAsync(DummyInputs<DummyOutput> inputs, ISupplierContext context, CancellationToken token = default)
         {
             AsyncOutputCalled = true;
             Debug.WriteLine($"{GetType().Name} {nameof(DummyInputs<DummyOutput>)} {nameof(ProcessAsync)} Called");
             return null;
         }
 
-        public Task ProcessAsync(ISupplierContext<DummyInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             AsyncCalled = true;
             Debug.WriteLine($"{GetType().Name} {nameof(DummyInputs)} {nameof(ProcessAsync)} Called");
             return Task.CompletedTask;
         }
 
-        public Task ProcessAsync(ISupplierContext<DummyEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(DummyEInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{GetType().Name} {nameof(DummyEInputs)} {nameof(ProcessAsync)} Called");
             return Task.CompletedTask;
@@ -103,13 +103,13 @@ namespace DDMedi.Test.Dummies
             return new object();
         }
 
-        public void Process(ISupplierContext<TInputs> context)
+        public void Process(TInputs inputs, ISupplierContext context)
         {
             Called = true;
             Debug.WriteLine($"{GetType().Name}<> {typeof(TInputs)} {nameof(Process)} Called");
         }
 
-        public Task ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             AsyncCalled = true;
             Debug.WriteLine($"{GetType().Name}<> {typeof(TInputs)} {nameof(ProcessAsync)} Called");
@@ -125,7 +125,7 @@ namespace DDMedi.Test.Dummies
         {
 
         }
-        public Task ProcessAsync(ISupplierContext<TEInputs> context, CancellationToken token = default)
+        public Task ProcessAsync(TEInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{GetType().Name}<> {typeof(TEInputs)} {nameof(ProcessAsync)} Called");
             return Task.CompletedTask;
@@ -139,7 +139,7 @@ namespace DDMedi.Test.Dummies
         {
             Inputs = inputs;
         }
-        public void Process(ISupplierContext<Dummy2Inputs> context)
+        public void Process(Dummy2Inputs inputs, ISupplierContext context)
         {
             Debug.WriteLine($"{GetType().Name}<> {typeof(Dummy2Inputs)} {nameof(Process)} Called");
         }
@@ -154,13 +154,13 @@ namespace DDMedi.Test.Dummies
             return new object();
         }
 
-        public virtual TOutput Process(ISupplierContext<TInputs> context)
+        public virtual TOutput Process(TInputs inputs, ISupplierContext context)
         {
             Debug.WriteLine($"{GetType().Name}<Output> {typeof(TInputs)} {nameof(Process)} Called");
             return default(TOutput);
         }
 
-        public virtual Task<TOutput> ProcessAsync(ISupplierContext<TInputs> context, CancellationToken token = default)
+        public virtual Task<TOutput> ProcessAsync(TInputs inputs, ISupplierContext context, CancellationToken token = default)
         {
             Debug.WriteLine($"{GetType().Name}<Output> {typeof(TInputs)} {nameof(ProcessAsync)} Called");
             return Task.FromResult(default(TOutput));

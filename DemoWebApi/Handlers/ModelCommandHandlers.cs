@@ -43,7 +43,7 @@ namespace DemoWebApi.Handlers
             _slim = new SemaphoreSlim(1);
         }
 
-        public async Task<int> ProcessAsync(ISupplierContext<InsertModelCommand> context, CancellationToken token = default)
+        public async Task<int> ProcessAsync(InsertModelCommand inputs, ISupplierContext context, CancellationToken token = default)
         {
             int id = 0;
             try
@@ -60,15 +60,15 @@ namespace DemoWebApi.Handlers
             return id;
         }
 
-        public async Task ProcessAsync(ISupplierContext<UpdateModelCommand> context, CancellationToken token = default)
+        public async Task ProcessAsync(UpdateModelCommand inputs, ISupplierContext context, CancellationToken token = default)
         {
             DemoModel model = null;
             try
             {
                 await _slim.WaitAsync();
-                model = _models.FirstOrDefault(e => e.Id == context.Inputs.Id) ??
+                model = _models.FirstOrDefault(e => e.Id == inputs.Id) ??
                     throw new KeyNotFoundException();
-                model.Count = context.Inputs.Count;
+                model.Count = inputs.Count;
             }
             finally
             {
@@ -77,12 +77,12 @@ namespace DemoWebApi.Handlers
             await context.DDBroker.Publish(new ModelUpdatedEvent(model.Id, model.Count));
         }
 
-        public async Task ProcessAsync(ISupplierContext<DeleteModelCommand> context, CancellationToken token = default)
+        public async Task ProcessAsync(DeleteModelCommand inputs, ISupplierContext context, CancellationToken token = default)
         {
             try
             {
                 await _slim.WaitAsync();
-                var model = _models.FirstOrDefault(e => e.Id == context.Inputs.Id) ??
+                var model = _models.FirstOrDefault(e => e.Id == inputs.Id) ??
                     throw new KeyNotFoundException();
                 _models.Remove(model);
             }
@@ -90,7 +90,7 @@ namespace DemoWebApi.Handlers
             {
                 _slim.Release();
             }
-            await context.DDBroker.Publish(new ModelDeletedEvent(context.Inputs.Id));
+            await context.DDBroker.Publish(new ModelDeletedEvent(inputs.Id));
         }
     }
 }

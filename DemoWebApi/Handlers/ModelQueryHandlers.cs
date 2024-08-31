@@ -25,15 +25,15 @@ namespace DemoWebApi.Handlers
         {
             _models = models;
         }
-        public DemoModel Process(ISupplierContext<GetModelQuery> context)
+        public DemoModel Process(GetModelQuery inputs, ISupplierContext context)
         {
-            return _models.FirstOrDefault(e => e.Id == context.Inputs.Id) ??
+            return _models.FirstOrDefault(e => e.Id == inputs.Id) ??
                 throw new KeyNotFoundException();
         }
 
-        public Task<DemoModel> ProcessAsync(ISupplierContext<GetModelQuery> context, CancellationToken token = default)
+        public Task<DemoModel> ProcessAsync(GetModelQuery inputs, ISupplierContext context, CancellationToken token = default)
         {
-            var model = _models.FirstOrDefault(e => e.Id == context.Inputs.Id) ??
+            var model = _models.FirstOrDefault(e => e.Id == inputs.Id) ??
                 throw new KeyNotFoundException();
             return Task.FromResult(model);
         }

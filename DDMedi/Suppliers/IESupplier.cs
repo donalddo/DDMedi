@@ -27,6 +27,6 @@ namespace DDMedi
     
     public interface IESupplier<TEInputs> : IESupplier where TEInputs : IEInputs
     {
-        Task ProcessAsync(ISupplierContext<TEInputs> context, CancellationToken token = default);
+        Task ProcessAsync(TEInputs inputs, ISupplierContext context, CancellationToken token = default);
     }
 }

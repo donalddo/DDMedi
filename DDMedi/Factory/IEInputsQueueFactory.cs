@@ -92,16 +92,6 @@ namespace DDMedi
         }
         static readonly MethodInfo GenericCreateAndInvokeProcessAsyncMethod =
             typeof(EInputsQueueFactory).GetMethod(nameof(PrivateCreateAndInvokeProcessAsync), BindingFlags.NonPublic | BindingFlags.Instance);
-        static Task CreateAndInvokeProcessAsync<TEInputs>(DDMediFactory ddFactory, IServiceProvider serviceProvider, SupplierDescriptor eSupplierDescriptor, EInputsModel eInputsModel)
-            where TEInputs : class, IEInputs
-        {
-            var ddBroker = new DDBroker(serviceProvider, ddFactory, eInputsModel.CorrelationId);
-            if (eSupplierDescriptor.Next == null)
-                return new ESupplierChannel<TEInputs>(ddBroker, eSupplierDescriptor)
-                    .ProcessAsync(eInputsModel.Inputs as TEInputs, eInputsModel.CancellationToken);
-            return new EDecoratorChannel<TEInputs>(ddBroker, eSupplierDescriptor)
-                .ProcessAsync(eInputsModel.Inputs as TEInputs, eInputsModel.CancellationToken);
-        }
         private async Task PrivateCreateAndInvokeProcessAsync<TEInputs>(SupplierDescriptor eSupplierDescriptor, EInputsModel eInputsModel)
             where TEInputs : class, IEInputs
         {
@@ -109,7 +99,9 @@ namespace DDMedi
             {
                 try
                 {
-                    await CreateAndInvokeProcessAsync<TEInputs>(DDMediFactory, newScope.ServiceProvider, eSupplierDescriptor, eInputsModel);
+                    var ddBroker = newScope.ServiceProvider.CreateBroker(eInputsModel.CorrelationId);
+                    await ddBroker.CreateESupplierChannel<TEInputs>(eSupplierDescriptor)
+                        .ProcessAsync(eInputsModel.Inputs as TEInputs, eInputsModel.CancellationToken);
                 }
                 catch (Exception ex)
                 {

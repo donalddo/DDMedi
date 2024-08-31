@@ -23,6 +23,7 @@ namespace DDMedi
     }
     internal interface IInternalDDBroker: IDDBroker
     {
+        string CorrelationId { get; set; }
         IServiceProvider Provider { get; }
     }
     internal class DDBroker : IInternalDDBroker
@@ -30,7 +31,7 @@ namespace DDMedi
         public IServiceProvider Provider { get; }
         readonly IInternalSupplierFactory _supplierFactory;
         readonly IInternalEInputsQueueFactory _queueFactory;
-        public string CorrelationId { get; }
+        public string CorrelationId { get; set; }
         public DDBroker(IServiceProvider provider, DDMediFactory factory): this(provider, factory, Guid.NewGuid().ToString()) { }
         internal DDBroker(IServiceProvider provider, DDMediFactory factory, string correlationId)
         {

@@ -85,5 +85,57 @@ namespace DDMedi
                 foreach (var descriptor in exceptionDescriptors)
                     descriptor.Queue.QueueItem(exceptionEInputs, correlationId, token);
         }
+
+        internal static IInternalDDBroker CreateBroker(this IServiceProvider provider, string correlationId)
+        {
+            var newBroker = provider.GetService(TypeConstant.IDDBrokerType) as IInternalDDBroker;
+            newBroker.CorrelationId = correlationId;
+            return newBroker;
+        }
+
+        internal static IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs<R>
+        {
+            if (descriptor == null)
+                throw new NotImplementedException();
+            if (descriptor.Next == null)
+                return new AsyncSupplierContext<T, R>(ddBroker, descriptor);
+            return new AsyncDecoratorContext<T, R>(ddBroker, descriptor);
+        }
+
+        internal static IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs
+        {
+            if (descriptor == null)
+                throw new NotImplementedException();
+            if (descriptor.Next == null)
+                return new AsyncSupplierContext<T>(ddBroker, descriptor);
+            return new AsyncDecoratorContext<T>(ddBroker, descriptor);
+        }
+
+        internal static ISupplierChannel<T, R> CreateSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs<R>
+        {
+            if (descriptor == null)
+                throw new NotImplementedException();
+            if (descriptor.Next == null)
+                return new SupplierContext<T, R>(ddBroker, descriptor);
+            return new DecoratorContext<T, R>(ddBroker, descriptor);
+        }
+
+        internal static ISupplierChannel<T> CreateSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs
+        {
+            if (descriptor == null)
+                throw new NotImplementedException();
+            if (descriptor.Next == null)
+                return new SupplierContext<T>(ddBroker, descriptor);
+            return new DecoratorContext<T>(ddBroker, descriptor);
+        }
+
+        internal static IESupplierChannel<T> CreateESupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IEInputs
+        {
+            if (descriptor == null)
+                throw new NotImplementedException();
+            if (descriptor.Next == null)
+                return new ESupplierContext<T>(ddBroker, descriptor);
+            return new EDecoratorContext<T>(ddBroker, descriptor);
+        }
     }
 }
