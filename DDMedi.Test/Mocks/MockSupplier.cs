@@ -6,7 +6,7 @@ namespace DDMedi.Test.Mocks
 {
     internal class MockSupplier<TInputs> :
         ISupplier<TInputs>
-        where TInputs:IInputs
+        where TInputs:class
     {
         public Mock<ISupplier<TInputs>> Mock { get; }
         public MockSupplier()
@@ -21,7 +21,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockAsyncSupplier<TInputs> :
         IAsyncSupplier<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public Mock<IAsyncSupplier<TInputs>> Mock { get; }
         public MockAsyncSupplier()
@@ -50,7 +50,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockSupplier<TInputs,TOutput> :
         ISupplier<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public Mock<ISupplier<TInputs, TOutput>> Mock { get; }
         public MockSupplier()
@@ -65,7 +65,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockAsyncSupplier<TInputs, TOutput> :
         IAsyncSupplier<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public Mock<IAsyncSupplier<TInputs, TOutput>> Mock { get; }
         public MockAsyncSupplier()
@@ -81,7 +81,7 @@ namespace DDMedi.Test.Mocks
     internal class MockAllSupplier<TInputs> :
         IAsyncSupplier<TInputs>,
         ISupplier<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public Mock<ISupplier<TInputs>> Mock { get; }
         public Mock<IAsyncSupplier<TInputs>> MockAsync { get; }
@@ -104,7 +104,7 @@ namespace DDMedi.Test.Mocks
     internal class MockAllSupplier<TInputs, TOutput> :
         IAsyncSupplier<TInputs, TOutput>,
         ISupplier<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public Mock<ISupplier<TInputs, TOutput>> Mock { get; }
         public Mock<IAsyncSupplier<TInputs, TOutput>> MockAsync { get; }

@@ -47,16 +47,16 @@ namespace DDMedi
     internal interface IDecoratorCollection : IDisposable
     {
         IDecoratorCollection RegisterAsyncDecorator<TInputs, TOutput, TDecorator>(Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs<TOutput>
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs, TOutput>;
         IDecoratorCollection RegisterAsyncDecorator<TInputs, TDecorator>(Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs>;
         IDecoratorCollection RegisterDecorator<TInputs, TOutput, TDecorator>(Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs<TOutput>
+            where TInputs : class
             where TDecorator : IDecorator<TInputs, TOutput>;
         IDecoratorCollection RegisterDecorator<TInputs, TDecorator>(Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs
+            where TInputs : class
             where TDecorator : IDecorator<TInputs>;
         IDecoratorCollection RegisterEDecorator<TEInput, TDecorator>(Func<IDecoratorInfo, bool> condition = null)
             where TEInput : IEInputs
@@ -77,19 +77,19 @@ namespace DDMedi
         }
 
         public IDecoratorCollection RegisterAsyncDecorator<TInputs, TOutput, TDecorator>(Func<IDecoratorInfo, bool> condition)
-            where TInputs : IInputs<TOutput>
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs, TOutput> =>
             CheckAndAddDecorator(TypeConstant.IGeneralSupplierType, typeof(IAsyncSupplier<TInputs, TOutput>), typeof(TDecorator), condition);
         public IDecoratorCollection RegisterAsyncDecorator<TInputs, TDecorator>(Func<IDecoratorInfo, bool> condition)
-            where TInputs : IInputs
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs> =>
             CheckAndAddDecorator(TypeConstant.IGeneralSupplierType, typeof(IAsyncSupplier<TInputs>), typeof(TDecorator), condition);
         public IDecoratorCollection RegisterDecorator<TInputs, TOutput, TDecorator>(Func<IDecoratorInfo, bool> condition)
-            where TInputs : IInputs<TOutput>
+            where TInputs : class
             where TDecorator : IDecorator<TInputs, TOutput> =>
             CheckAndAddDecorator(TypeConstant.IGeneralSupplierType, typeof(ISupplier<TInputs, TOutput>), typeof(TDecorator), condition);
         public IDecoratorCollection RegisterDecorator<TInputs, TDecorator>(Func<IDecoratorInfo, bool> condition)
-            where TInputs : IInputs
+            where TInputs : class
             where TDecorator : IDecorator<TInputs> =>
             CheckAndAddDecorator(TypeConstant.IGeneralSupplierType, typeof(ISupplier<TInputs>), typeof(TDecorator), condition);
         public IDecoratorCollection RegisterEDecorator<TEInputs, TEDecorator>(Func<IDecoratorInfo, bool> condition)

@@ -39,7 +39,7 @@ namespace DemoWebApi.Handlers
 
         public int Id { get; }
     }
-    public class PurgeCachedModelsCommand : IInputs { }
+    public class PurgeCachedModelsCommand { }
     public class CachedModelHandlers :
         IAsyncDecorator<GetModelQuery, DemoModel>,
         IDecorator<GetModelQuery, DemoModel>,

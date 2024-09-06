@@ -4,13 +4,13 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>DDMedi</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Authors>donalddo88@gmail.com</Authors>
     <RepositoryUrl>https://github.com/donalddo/DDMedi</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <description>
 An .Net library with Mediator Support
-Spec version: 2.0.0
+Spec version: 2.0.1
 Contact: donalddo88@gmail.com
   </description>
   </PropertyGroup>

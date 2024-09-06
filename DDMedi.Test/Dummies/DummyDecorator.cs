@@ -10,7 +10,7 @@ namespace DDMedi.Test.Dummies
         public abstract void Process(DummyInputs inputs, IDecoratorContext context);
     }
     internal abstract class InvalidDecorator2<T> :
-        IDecorator<T> where T : IInputs
+        IDecorator<T> where T : class
     {
         public abstract void Process(T inputs, IDecoratorContext context);
     }
@@ -86,7 +86,7 @@ namespace DDMedi.Test.Dummies
     internal class DummyAllDecorator<T> :
         IAsyncDecorator<T>,
         IDecorator<T>
-        where T : IInputs
+        where T : class
     {
         public bool Called { get; set; }
         public bool AsyncCalled { get; set; }
@@ -107,7 +107,7 @@ namespace DDMedi.Test.Dummies
     internal class DummyAllDecorator<T,R> :
         IAsyncDecorator<T, R>,
         IDecorator<T, R>
-        where T: IInputs<R>
+        where T: class
     {
         public bool Called { get; set; }
         public bool AsyncCalled { get; set; }
@@ -174,7 +174,7 @@ namespace DDMedi.Test.Dummies
 
     internal class DummyDecorator<TInputs, TOutput> :
         IDecorator<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public bool Called { get; set; }
         public TOutput Process(TInputs inputs, IDecoratorContext<TOutput> context = null)
@@ -207,7 +207,7 @@ namespace DDMedi.Test.Dummies
     }
     internal class DummyDecorator<TInputs> :
         IDecorator<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public bool Called { get; set; }
         public void Process(TInputs inputs, IDecoratorContext context)
@@ -219,7 +219,7 @@ namespace DDMedi.Test.Dummies
     }
     internal class DummyAsyncDecorator<TInputs> :
         IAsyncDecorator<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public bool Called { get; set; }
         public Task ProcessAsync(TInputs inputs, IAsyncDecoratorContext context, CancellationToken token = default)
@@ -231,7 +231,7 @@ namespace DDMedi.Test.Dummies
     }
     internal class DummyAsyncDecorator<TInputs, TOutput> :
         IAsyncDecorator<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public bool Called { get; set; }
         public Task<TOutput> ProcessAsync(TInputs inputs, IAsyncDecoratorContext<TOutput> context, CancellationToken token = default)

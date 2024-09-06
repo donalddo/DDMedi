@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace DDMedi.Test.Dummies
-{
+{   public interface IInputs { }
+    public interface IInputs<out Output> { }
     public class DummyInputs : IInputs { }
     internal class DummyInputs<TOutput> : IInputs<TOutput> { }
     public class Dummy2Inputs : IInputs { }
@@ -94,7 +95,7 @@ namespace DDMedi.Test.Dummies
     internal class DummySupplier<TInputs> :
         IAsyncSupplier<TInputs>,
         ISupplier<TInputs>
-        where TInputs:IInputs
+        where TInputs:class
     {
         public bool Called { get; set; }
         public bool AsyncCalled { get; set; }
@@ -147,7 +148,7 @@ namespace DDMedi.Test.Dummies
     internal class DummySupplier<TInputs,TOutput> :
         IAsyncSupplier<TInputs, TOutput>,
         ISupplier<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public object Clone()
         {

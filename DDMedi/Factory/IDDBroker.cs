@@ -8,15 +8,15 @@ namespace DDMedi
     {
         string CorrelationId { get; }
 
-        Task<TOutput> ProcessAsync<TInputs, TOutput>(TInputs inputs = default, CancellationToken token = default) where TInputs : IInputs<TOutput>;
-        Task ProcessAsync<TInputs>(TInputs inputs = default, CancellationToken token = default) where TInputs : IInputs;
-        TOutput Process<TInputs, TOutput>(TInputs inputs = default) where TInputs : IInputs<TOutput>;
-        void Process<TInputs>(TInputs inputs = default) where TInputs : IInputs;
+        Task<TOutput> ProcessAsync<TInputs, TOutput>(TInputs inputs = default, CancellationToken token = default) where TInputs : class;
+        Task ProcessAsync<TInputs>(TInputs inputs = default, CancellationToken token = default) where TInputs : class;
+        TOutput Process<TInputs, TOutput>(TInputs inputs = default) where TInputs : class;
+        void Process<TInputs>(TInputs inputs = default) where TInputs : class;
 
-        IAsyncSupplierChannel<TInputs, TOutput> CreateAsyncSupplierChannel<TInputs, TOutput>() where TInputs : IInputs<TOutput>;
-        IAsyncSupplierChannel<TInputs> CreateAsyncSupplierChannel<TInputs>() where TInputs : IInputs;
-        ISupplierChannel<TInputs, TOutput> CreateSupplierChannel<TInputs, TOutput>() where TInputs : IInputs<TOutput>;
-        ISupplierChannel<TInputs> CreateSupplierChannel<TInputs>() where TInputs : IInputs;
+        IAsyncSupplierChannel<TInputs, TOutput> CreateAsyncSupplierChannel<TInputs, TOutput>() where TInputs : class;
+        IAsyncSupplierChannel<TInputs> CreateAsyncSupplierChannel<TInputs>() where TInputs : class;
+        ISupplierChannel<TInputs, TOutput> CreateSupplierChannel<TInputs, TOutput>() where TInputs : class;
+        ISupplierChannel<TInputs> CreateSupplierChannel<TInputs>() where TInputs : class;
 
         Task Publish(IEInputs inputs = default, CancellationToken token = default);
         Task Publish<TEInputs>(TEInputs inputs = default, CancellationToken token = default) where TEInputs : IEInputs;
@@ -42,22 +42,22 @@ namespace DDMedi
             CorrelationId = correlationId;
         }
 
-        public Task<TOutput> ProcessAsync<TInputs, TOutput>(TInputs inputs = default, CancellationToken token = default) where TInputs : IInputs<TOutput>
+        public Task<TOutput> ProcessAsync<TInputs, TOutput>(TInputs inputs = default, CancellationToken token = default) where TInputs : class
         => _supplierFactory.CreateAsyncSupplierChannel<TInputs, TOutput>(this).ProcessAsync(inputs, token);
-        public Task ProcessAsync<TInputs>(TInputs inputs = default, CancellationToken token = default) where TInputs : IInputs
+        public Task ProcessAsync<TInputs>(TInputs inputs = default, CancellationToken token = default) where TInputs : class
         => _supplierFactory.CreateAsyncSupplierChannel<TInputs>(this).ProcessAsync(inputs, token);
-        public TOutput Process<TInputs, TOutput>(TInputs inputs = default) where TInputs : IInputs<TOutput>
+        public TOutput Process<TInputs, TOutput>(TInputs inputs = default) where TInputs : class
         => _supplierFactory.CreateSupplierChannel<TInputs, TOutput>(this).Process(inputs);
-        public void Process<TInputs>(TInputs inputs = default) where TInputs : IInputs
+        public void Process<TInputs>(TInputs inputs = default) where TInputs : class
         => _supplierFactory.CreateSupplierChannel<TInputs>(this).Process(inputs);
 
-        public IAsyncSupplierChannel<TInputs, TOutput> CreateAsyncSupplierChannel<TInputs, TOutput>() where TInputs : IInputs<TOutput>
+        public IAsyncSupplierChannel<TInputs, TOutput> CreateAsyncSupplierChannel<TInputs, TOutput>() where TInputs : class
         => _supplierFactory.CreateAsyncSupplierChannel<TInputs, TOutput>(this);
-        public IAsyncSupplierChannel<TInputs> CreateAsyncSupplierChannel<TInputs>() where TInputs : IInputs
+        public IAsyncSupplierChannel<TInputs> CreateAsyncSupplierChannel<TInputs>() where TInputs : class
         => _supplierFactory.CreateAsyncSupplierChannel<TInputs>(this);
-        public ISupplierChannel<TInputs, TOutput> CreateSupplierChannel<TInputs, TOutput>() where TInputs : IInputs<TOutput>
+        public ISupplierChannel<TInputs, TOutput> CreateSupplierChannel<TInputs, TOutput>() where TInputs : class
         => _supplierFactory.CreateSupplierChannel<TInputs, TOutput>(this);
-        public ISupplierChannel<TInputs> CreateSupplierChannel<TInputs>() where TInputs : IInputs
+        public ISupplierChannel<TInputs> CreateSupplierChannel<TInputs>() where TInputs : class
         => _supplierFactory.CreateSupplierChannel<TInputs>(this);
 
         public Task Publish(IEInputs inputs = default, CancellationToken token = default)

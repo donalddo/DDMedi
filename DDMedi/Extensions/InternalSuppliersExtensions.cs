@@ -93,7 +93,7 @@ namespace DDMedi
             return newBroker;
         }
 
-        internal static IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs<R>
+        internal static IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : class
         {
             if (descriptor == null)
                 throw new NotImplementedException();
@@ -102,7 +102,7 @@ namespace DDMedi
             return new AsyncDecoratorContext<T, R>(ddBroker, descriptor);
         }
 
-        internal static IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs
+        internal static IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : class
         {
             if (descriptor == null)
                 throw new NotImplementedException();
@@ -111,7 +111,7 @@ namespace DDMedi
             return new AsyncDecoratorContext<T>(ddBroker, descriptor);
         }
 
-        internal static ISupplierChannel<T, R> CreateSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs<R>
+        internal static ISupplierChannel<T, R> CreateSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : class
         {
             if (descriptor == null)
                 throw new NotImplementedException();
@@ -120,7 +120,7 @@ namespace DDMedi
             return new DecoratorContext<T, R>(ddBroker, descriptor);
         }
 
-        internal static ISupplierChannel<T> CreateSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : IInputs
+        internal static ISupplierChannel<T> CreateSupplierChannel<T>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : class
         {
             if (descriptor == null)
                 throw new NotImplementedException();

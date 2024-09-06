@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace DemoWebApi.Handlers
 {
-    public class InsertModelCommand : IInputs<int>
+    public class InsertModelCommand
     {
     }
-    public class UpdateModelCommand : IInputs
+    public class UpdateModelCommand
     {
         public UpdateModelCommand(int id, int count)
         {
@@ -21,7 +21,7 @@ namespace DemoWebApi.Handlers
         public int Id { get; }
         public int Count { get; }
     }
-    public class DeleteModelCommand : IInputs
+    public class DeleteModelCommand
     {
         public DeleteModelCommand(int id)
         {

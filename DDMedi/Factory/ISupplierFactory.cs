@@ -29,10 +29,10 @@ namespace DDMedi
     }
     internal interface IInternalSupplierFactory : ISupplierFactory, IDisposable
     {
-        IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>;
-        IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs;
-        ISupplierChannel<T, R> CreateSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>;
-        ISupplierChannel<T> CreateSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs;
+        IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : class;
+        IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(IInternalDDBroker ddBroker) where T : class;
+        ISupplierChannel<T, R> CreateSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : class;
+        ISupplierChannel<T> CreateSupplierChannel<T>(IInternalDDBroker ddBroker) where T : class;
     }
     internal abstract class BaseFactory : IDisposable
     {
@@ -75,22 +75,22 @@ namespace DDMedi
             _supplierOutputDic = SupplierDescriptorDic[TypeConstant.IGenericSupplierOutputType];
             _supplierDic = SupplierDescriptorDic[TypeConstant.IGenericSupplierType];
         }
-        public IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>
+        public IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : class
         {
             var descriptor = _asyncSupplierOutputDic.GetValueOrDefault(typeof(T))?[0];
             return ddBroker.CreateAsyncSupplierChannel<T, R>(descriptor);
         }
-        public IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs
+        public IAsyncSupplierChannel<T> CreateAsyncSupplierChannel<T>(IInternalDDBroker ddBroker) where T : class
         {
             var descriptor = _asyncSupplierDic.GetValueOrDefault(typeof(T))?[0];
             return ddBroker.CreateAsyncSupplierChannel<T>(descriptor);
         }
-        public ISupplierChannel<T, R> CreateSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : IInputs<R>
+        public ISupplierChannel<T, R> CreateSupplierChannel<T, R>(IInternalDDBroker ddBroker) where T : class
         {
             var descriptor = _supplierOutputDic.GetValueOrDefault(typeof(T))?[0];
             return ddBroker.CreateSupplierChannel<T, R>(descriptor);
         }
-        public ISupplierChannel<T> CreateSupplierChannel<T>(IInternalDDBroker ddBroker) where T : IInputs
+        public ISupplierChannel<T> CreateSupplierChannel<T>(IInternalDDBroker ddBroker) where T : class
         {
             var descriptor = _supplierDic.GetValueOrDefault(typeof(T))?[0];
             return ddBroker.CreateSupplierChannel<T>(descriptor);

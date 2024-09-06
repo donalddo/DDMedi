@@ -22,11 +22,11 @@ namespace ExampleApp
         }
         public int Counted { get; }
     }
-    public class DoCommandObj : IInputs<object>
+    public class DoCommandObj
     {
         public int Count { get; set; }
     }
-    public class DoCommand : IInputs
+    public class DoCommand
     {
         public int Count { get; set; }
     }

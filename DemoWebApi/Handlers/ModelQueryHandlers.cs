@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DemoWebApi.Handlers
 {
-    public class GetModelQuery : IInputs<DemoModel>
+    public class GetModelQuery
     {
         public GetModelQuery(int id)
         {

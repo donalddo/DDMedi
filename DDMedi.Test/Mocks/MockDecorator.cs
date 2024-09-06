@@ -8,7 +8,7 @@ namespace DDMedi.Test.Mocks
 {
     internal class MockDecorator<TInputs> :
         IDecorator<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public Mock<IDecorator<TInputs>> Mock { get; }
         public MockDecorator()
@@ -24,7 +24,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockAsyncDecorator<TInputs> :
         IAsyncDecorator<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public Mock<IAsyncDecorator<TInputs>> Mock { get; }
         public MockAsyncDecorator()
@@ -58,7 +58,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockDecorator<TInputs, TOutput> :
         IDecorator<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public Mock<IDecorator<TInputs, TOutput>> Mock { get; }
         public MockDecorator()
@@ -74,7 +74,7 @@ namespace DDMedi.Test.Mocks
     }
     internal class MockAsyncDecorator<TInputs, TOutput> :
         IAsyncDecorator<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public Mock<IAsyncDecorator<TInputs, TOutput>> Mock { get; }
         public MockAsyncDecorator()
@@ -91,7 +91,7 @@ namespace DDMedi.Test.Mocks
     internal class MockAllDecorator<TInputs> :
         IAsyncDecorator<TInputs>,
         IDecorator<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         public IServiceProvider Provider { get; set; }
         public Mock<IDecorator<TInputs>> Mock { get; }
@@ -121,7 +121,7 @@ namespace DDMedi.Test.Mocks
     internal class MockAllDecorator<TInputs, TOutput> :
         IAsyncDecorator<TInputs, TOutput>,
         IDecorator<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         public IServiceProvider Provider { get; set; }
         public Mock<IDecorator<TInputs, TOutput>> Mock { get; }

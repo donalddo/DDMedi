@@ -7,19 +7,19 @@ namespace DDMedi
     {
         IDDBroker DDBroker { get; }
     }
-    public interface IAsyncSupplierChannel<TInputs, TOutput> : IBaseSupplierChannel where TInputs : IInputs<TOutput>
+    public interface IAsyncSupplierChannel<TInputs, TOutput> : IBaseSupplierChannel where TInputs : class
     {
         Task<TOutput> ProcessAsync(TInputs inputs = default, CancellationToken token = default);
     }
-    public interface IAsyncSupplierChannel<TInputs> : IBaseSupplierChannel where TInputs : IInputs
+    public interface IAsyncSupplierChannel<TInputs> : IBaseSupplierChannel where TInputs : class
     {
         Task ProcessAsync(TInputs inputs = default, CancellationToken token = default);
     }
-    public interface ISupplierChannel<TInputs, TOutput> : IBaseSupplierChannel where TInputs : IInputs<TOutput>
+    public interface ISupplierChannel<TInputs, TOutput> : IBaseSupplierChannel where TInputs : class
     {
         TOutput Process(TInputs inputs = default);
     }
-    public interface ISupplierChannel<TInputs> : IBaseSupplierChannel where TInputs : IInputs
+    public interface ISupplierChannel<TInputs> : IBaseSupplierChannel where TInputs : class
     {
         void Process(TInputs inputs = default);
     }

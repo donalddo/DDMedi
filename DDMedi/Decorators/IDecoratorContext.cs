@@ -6,23 +6,23 @@ namespace DDMedi
 {
     public interface IAsyncDecoratorContext<TOutput> : ISupplierContext
     {
-        Task<TOutput> Next(IInputs<TOutput> inputs, CancellationToken cancellationToken = default);
-        Task<TOutput> Next(IInputs<TOutput> inputs, IServiceProvider provider, CancellationToken cancellationToken = default);
+        Task<TOutput> Next<TInputs>(TInputs inputs, CancellationToken cancellationToken = default) where TInputs : class;
+        Task<TOutput> Next<TInputs>(TInputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default) where TInputs : class;
     }
     public interface IAsyncDecoratorContext : ISupplierContext
     {
-        Task Next(IInputs inputs, CancellationToken cancellationToken = default);
-        Task Next(IInputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default);
+        Task Next<TInputs>(TInputs inputs, CancellationToken cancellationToken = default) where TInputs : class;
+        Task Next<TInputs>(TInputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default) where TInputs : class;
     }
     public interface IDecoratorContext<TOutput> : ISupplierContext
     {
-        TOutput Next(IInputs<TOutput> inputs);
-        TOutput Next(IInputs<TOutput> inputs, IServiceProvider provider);
+        TOutput Next<TInputs>(TInputs inputs) where TInputs : class;
+        TOutput Next<TInputs>(TInputs inputs, IServiceProvider provider) where TInputs : class;
     }
     public interface IDecoratorContext : ISupplierContext
     {
-        void Next(IInputs inputs);
-        void Next(IInputs inputs, IServiceProvider provider);
+        void Next<TInputs>(TInputs inputs) where TInputs : class;
+        void Next<TInputs>(TInputs inputs, IServiceProvider provider) where TInputs : class;
     }
     public interface IEDecoratorContext : ISupplierContext
     {
@@ -33,98 +33,98 @@ namespace DDMedi
         BaseSupplierContext<TInputs, IAsyncDecorator<TInputs, TOutput>>,
         IAsyncSupplierChannel<TInputs, TOutput>,
         IAsyncDecoratorContext<TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         private IAsyncSupplierChannel<TInputs, TOutput> _nextSupplier;
         internal AsyncDecoratorContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
         public Task<TOutput> ProcessAsync(TInputs inputs, CancellationToken cancellationToken = default) => _instance.ProcessAsync(inputs, this, cancellationToken);
-        public Task<TOutput> Next(IInputs<TOutput> inputs, CancellationToken cancellationToken = default)
+        public Task<TOutput> Next<Inputs>(Inputs inputs, CancellationToken cancellationToken = default) where Inputs : class
         {
             if (_nextSupplier != null)
-                return _nextSupplier.ProcessAsync((TInputs)inputs, cancellationToken);
+                return _nextSupplier.ProcessAsync(inputs as TInputs, cancellationToken);
             _nextSupplier = _broker.CreateAsyncSupplierChannel<TInputs, TOutput>(_descriptor.Next);
-            return _nextSupplier.ProcessAsync((TInputs)inputs, cancellationToken);
+            return _nextSupplier.ProcessAsync(inputs as TInputs, cancellationToken);
         }
-        public Task<TOutput> Next(IInputs<TOutput> inputs, IServiceProvider provider, CancellationToken cancellationToken = default)
+        public Task<TOutput> Next<Inputs>(Inputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default) where Inputs : class
         {
             if (provider == _broker.Provider)
                 return Next(inputs, cancellationToken);
             var newBroker = provider.CreateBroker(CorrelationId);
-            return newBroker.CreateAsyncSupplierChannel<TInputs, TOutput>(_descriptor.Next).ProcessAsync((TInputs)inputs, cancellationToken);
+            return newBroker.CreateAsyncSupplierChannel<TInputs, TOutput>(_descriptor.Next).ProcessAsync(inputs as TInputs, cancellationToken);
         }
     }
     internal sealed class AsyncDecoratorContext<TInputs> :
         BaseSupplierContext<TInputs, IAsyncDecorator<TInputs>>,
         IAsyncSupplierChannel<TInputs>,
         IAsyncDecoratorContext
-        where TInputs : IInputs
+        where TInputs : class
     {
         private IAsyncSupplierChannel<TInputs> _nextSupplier;
         internal AsyncDecoratorContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
         public Task ProcessAsync(TInputs inputs, CancellationToken cancellationToken = default) => _instance.ProcessAsync(inputs, this, cancellationToken);
-        public Task Next(IInputs inputs, CancellationToken cancellationToken = default)
+        public Task Next<Inputs>(Inputs inputs, CancellationToken cancellationToken = default) where Inputs : class
         {
             if (_nextSupplier != null)
-                return _nextSupplier.ProcessAsync((TInputs)inputs, cancellationToken);
+                return _nextSupplier.ProcessAsync(inputs as TInputs, cancellationToken);
             _nextSupplier = _broker.CreateAsyncSupplierChannel<TInputs>(_descriptor.Next);
-            return _nextSupplier.ProcessAsync((TInputs)inputs, cancellationToken);
+            return _nextSupplier.ProcessAsync(inputs as TInputs, cancellationToken);
         }
-        public Task Next(IInputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default)
+        public Task Next<Inputs>(Inputs inputs, IServiceProvider provider, CancellationToken cancellationToken = default) where Inputs : class
         {
             if (provider == _broker.Provider)
                 return Next(inputs, cancellationToken);
             var newBroker = provider.CreateBroker(CorrelationId);
-            return newBroker.CreateAsyncSupplierChannel<TInputs>(_descriptor.Next).ProcessAsync((TInputs)inputs, cancellationToken);
+            return newBroker.CreateAsyncSupplierChannel<TInputs>(_descriptor.Next).ProcessAsync(inputs as TInputs, cancellationToken);
         }
     }
     internal sealed class DecoratorContext<TInputs, TOutput> :
         BaseSupplierContext<TInputs, IDecorator<TInputs, TOutput>>,
         ISupplierChannel<TInputs, TOutput>,
         IDecoratorContext<TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         private ISupplierChannel<TInputs, TOutput> _nextSupplier;
         internal DecoratorContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
         public TOutput Process(TInputs inputs) => _instance.Process(inputs, this);
-        public TOutput Next(IInputs<TOutput> inputs)
+        public TOutput Next<Inputs>(Inputs inputs) where Inputs : class
         {
             if (_nextSupplier != null)
-                return _nextSupplier.Process((TInputs)inputs);
+                return _nextSupplier.Process(inputs as TInputs);
             _nextSupplier = _broker.CreateSupplierChannel<TInputs, TOutput>(_descriptor.Next);
-            return _nextSupplier.Process((TInputs)inputs);
+            return _nextSupplier.Process(inputs as TInputs);
         }
-        public TOutput Next(IInputs<TOutput> inputs, IServiceProvider provider)
+        public TOutput Next<Inputs>(Inputs inputs, IServiceProvider provider) where Inputs : class
         {
             if (provider == _broker.Provider)
                 return Next(inputs);
             var newBroker = provider.CreateBroker(CorrelationId);
-            return newBroker.CreateSupplierChannel<TInputs, TOutput>(_descriptor.Next).Process((TInputs)inputs);
+            return newBroker.CreateSupplierChannel<TInputs, TOutput>(_descriptor.Next).Process(inputs as TInputs);
         }
     }
     internal sealed class DecoratorContext<TInputs> :
         BaseSupplierContext<TInputs, IDecorator<TInputs>>,
         ISupplierChannel<TInputs>,
         IDecoratorContext
-        where TInputs : IInputs
+        where TInputs : class
     {
         private ISupplierChannel<TInputs> _nextSupplier;
         internal DecoratorContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
         public void Process(TInputs inputs) => _instance.Process(inputs, this);
-        public void Next(IInputs inputs)
+        public void Next<Inputs>(Inputs inputs) where Inputs : class
         {
             if (_nextSupplier != null)
             {
-                _nextSupplier.Process((TInputs)inputs);
+                _nextSupplier.Process(inputs as TInputs);
                 return;
             }
             _nextSupplier = _broker.CreateSupplierChannel<TInputs>(_descriptor.Next);
-            _nextSupplier.Process((TInputs)inputs);
+            _nextSupplier.Process(inputs as TInputs);
         }
-        public void Next(IInputs inputs, IServiceProvider provider)
+        public void Next<Inputs>(Inputs inputs, IServiceProvider provider) where Inputs : class
         {
             if (provider == _broker.Provider)
             {
@@ -132,7 +132,7 @@ namespace DDMedi
                 return;
             }
             var newBroker = provider.CreateBroker(CorrelationId);
-            newBroker.CreateSupplierChannel<TInputs>(_descriptor.Next).Process((TInputs)inputs);
+            newBroker.CreateSupplierChannel<TInputs>(_descriptor.Next).Process(inputs as TInputs);
         }
     }
     internal sealed class EDecoratorContext<TEInputs> :

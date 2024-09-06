@@ -28,7 +28,7 @@ namespace DDMedi
     internal sealed class AsyncSupplierContext<TInputs, TOutput> :
         BaseSupplierContext<TInputs, IAsyncSupplier<TInputs, TOutput>>,
         IAsyncSupplierChannel<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         internal AsyncSupplierContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
@@ -37,7 +37,7 @@ namespace DDMedi
     internal sealed class AsyncSupplierContext<TInputs> :
         BaseSupplierContext<TInputs, IAsyncSupplier<TInputs>>,
         IAsyncSupplierChannel<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         internal AsyncSupplierContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
@@ -46,7 +46,7 @@ namespace DDMedi
     internal sealed class SupplierContext<TInputs, TOutput> :
         BaseSupplierContext<TInputs, ISupplier<TInputs, TOutput>>,
         ISupplierChannel<TInputs, TOutput>
-        where TInputs : IInputs<TOutput>
+        where TInputs : class
     {
         internal SupplierContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }
@@ -55,7 +55,7 @@ namespace DDMedi
     internal sealed class SupplierContext<TInputs> :
         BaseSupplierContext<TInputs, ISupplier<TInputs>>,
         ISupplierChannel<TInputs>
-        where TInputs : IInputs
+        where TInputs : class
     {
         internal SupplierContext(IInternalDDBroker broker, SupplierDescriptor descriptor)
             : base(broker, descriptor) { }

@@ -5,28 +5,28 @@ namespace DDMedi
     public static class DecoratorExtensions
     {
         public static DDMediCollection AddAsyncDecorator<TInputs, TResult, TDecorator>(this DDMediCollection ddCollection, Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs<TResult>
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs, TResult>
         {
             ddCollection.DecoratorCollection.RegisterAsyncDecorator<TInputs, TResult, TDecorator>(condition);
             return ddCollection;
         }
         public static DDMediCollection AddAsyncDecorator<TInputs, TDecorator>(this DDMediCollection ddCollection, Func<IDecoratorInfo, bool> condition = null)
-            where TInputs : IInputs
+            where TInputs : class
             where TDecorator : IAsyncDecorator<TInputs>
         {
             ddCollection.DecoratorCollection.RegisterAsyncDecorator<TInputs, TDecorator>(condition);
             return ddCollection;
         }
         public static DDMediCollection AddDecorator<TInputs, TResult, TDecorator>(this DDMediCollection ddCollection, Func<IDecoratorInfo, bool> condition = null)
-                where TInputs : IInputs<TResult>
+                where TInputs : class
                 where TDecorator : IDecorator<TInputs, TResult>
         {
             ddCollection.DecoratorCollection.RegisterDecorator<TInputs, TResult, TDecorator>(condition);
             return ddCollection;
         }
         public static DDMediCollection AddDecorator<TInputs, TDecorator>(this DDMediCollection ddCollection, Func<IDecoratorInfo, bool> condition = null)
-                    where TInputs : IInputs
+                    where TInputs : class
                     where TDecorator : IDecorator<TInputs>
         {
             ddCollection.DecoratorCollection.RegisterDecorator<TInputs, TDecorator>(condition);
