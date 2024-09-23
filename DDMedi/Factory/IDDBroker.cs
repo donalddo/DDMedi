@@ -7,6 +7,7 @@ namespace DDMedi
     public interface IDDBroker
     {
         string CorrelationId { get; }
+        IServiceProvider Provider { get; }
 
         Task<TOutput> ProcessAsync<TInputs, TOutput>(TInputs inputs = default, CancellationToken token = default) where TInputs : class;
         Task ProcessAsync<TInputs>(TInputs inputs = default, CancellationToken token = default) where TInputs : class;
@@ -24,7 +25,6 @@ namespace DDMedi
     internal interface IInternalDDBroker: IDDBroker
     {
         string CorrelationId { get; set; }
-        IServiceProvider Provider { get; }
     }
     internal class DDBroker : IInternalDDBroker
     {
