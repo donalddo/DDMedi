@@ -42,7 +42,7 @@ namespace DDMedi.Test.Mocks
         IEDecorator<TEInputs>
         where TEInputs : IEInputs
     {
-        public IServiceProvider Provider { get; set; }
+        public ISupplierScope Scope { get; set; }
         public Mock<IEDecorator<TEInputs>> Mock { get; }
         public MockEDecorator(Mock<IEDecorator<TEInputs>> mock)
         {
@@ -51,9 +51,9 @@ namespace DDMedi.Test.Mocks
         public Task ProcessAsync(TEInputs inputs, IEDecoratorContext context, CancellationToken token = default)
         {
             Mock.Object.ProcessAsync(inputs, context, token);
-            if (Provider == null)
+            if (Scope == null)
                 return this.Next(inputs, context, token);
-            else return this.Next(inputs, context, Provider, token);
+            else return this.Next(inputs, context, Scope, token);
         }
     }
     internal class MockDecorator<TInputs, TOutput> :
@@ -93,7 +93,7 @@ namespace DDMedi.Test.Mocks
         IDecorator<TInputs>
         where TInputs : class
     {
-        public IServiceProvider Provider { get; set; }
+        public ISupplierScope Scope { get; set; }
         public Mock<IDecorator<TInputs>> Mock { get; }
         public Mock<IAsyncDecorator<TInputs>> MockAsync { get; }
         public MockAllDecorator()
@@ -105,17 +105,17 @@ namespace DDMedi.Test.Mocks
         public void Process(TInputs inputs, IDecoratorContext context)
         {
             Mock.Object.Process(inputs, context);
-            if(Provider == null)
+            if(Scope == null)
                 this.Next(inputs, context);
-            else this.Next(inputs, context, Provider);
+            else this.Next(inputs, context, Scope);
         }
 
         public Task ProcessAsync(TInputs inputs, IAsyncDecoratorContext context, CancellationToken token)
         {
             MockAsync.Object.ProcessAsync(inputs, context, token);
-            if (Provider == null)
+            if (Scope == null)
                 return this.Next(inputs, context, token);
-            else return this.Next(inputs, context, Provider, token);
+            else return this.Next(inputs, context, Scope, token);
         }
     }
     internal class MockAllDecorator<TInputs, TOutput> :
@@ -123,7 +123,7 @@ namespace DDMedi.Test.Mocks
         IDecorator<TInputs, TOutput>
         where TInputs : class
     {
-        public IServiceProvider Provider { get; set; }
+        public ISupplierScope Scope { get; set; }
         public Mock<IDecorator<TInputs, TOutput>> Mock { get; }
         public Mock<IAsyncDecorator<TInputs, TOutput>> MockAsync { get; }
         public MockAllDecorator()
@@ -135,17 +135,17 @@ namespace DDMedi.Test.Mocks
         public TOutput Process(TInputs inputs, IDecoratorContext<TOutput> context)
         {
             Mock.Object.Process(inputs, context);
-            if (Provider == null)
+            if (Scope == null)
                 return this.Next(inputs, context);
-            else return this.Next(inputs, context, Provider);
+            else return this.Next(inputs, context, Scope);
         }
 
         public Task<TOutput> ProcessAsync(TInputs inputs, IAsyncDecoratorContext<TOutput> context, CancellationToken token)
         {
             MockAsync.Object.ProcessAsync(inputs, context, token);
-            if (Provider == null)
+            if (Scope == null)
                 return this.Next(inputs, context, token);
-            else return this.Next(inputs, context, Provider, token);
+            else return this.Next(inputs, context, Scope, token);
         }
     }
 

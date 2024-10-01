@@ -657,8 +657,8 @@ namespace DDMedi.Test.Tests
         public async Task DecoratorSameScopesTest()
         {
             var scopeFactory = SetUpScopeFactory();
-
-            var provider1 = scopeFactory.CreateScope().ServiceProvider;
+            var scope1 = scopeFactory.CreateScope();
+            var provider1 = scope1.ServiceProvider;
 
             var broker1 = provider1.Get<IDDBroker>();
             var channel1 = broker1.CreateAsyncSupplierChannel<IInputs<object>, object>();
@@ -703,8 +703,8 @@ namespace DDMedi.Test.Tests
             channel2.Process();
             await channel3.ProcessAsync();
             channel4.Process();
-            decoratorOutput.Provider = provider1;
-            decorator.Provider = provider1;
+            decoratorOutput.Scope = scope1;
+            decorator.Scope = scope1;
             await channel1.ProcessAsync();
             channel2.Process();
             await channel3.ProcessAsync();
@@ -729,10 +729,15 @@ namespace DDMedi.Test.Tests
         {
             var scopeFactory = SetUpScopeFactory();
 
-            var provider1 = scopeFactory.CreateScope().ServiceProvider;
-            var provider2 = scopeFactory.CreateScope().ServiceProvider;
-
+            var scope1 = scopeFactory.CreateScope();
+            var provider1 = scope1.ServiceProvider;
             var broker1 = provider1.Get<IDDBroker>();
+            var scope2 = broker1.CreateScope();
+            var provider2 = scope2.ServiceProvider;
+            var testCorrelationId = "test id!!!";
+            var scope3 = scopeFactory.CreateScope(testCorrelationId);
+            var provider3 = scope3.ServiceProvider;
+
             var channel1 = broker1.CreateAsyncSupplierChannel<IInputs<object>, object>();
             var channel2 = broker1.CreateSupplierChannel<IInputs<object>, object>();
             var channel3 = broker1.CreateAsyncSupplierChannel<IInputs>();
@@ -770,21 +775,43 @@ namespace DDMedi.Test.Tests
             supplier2.Mock.SetUpProcessAny()
                 .Callback<IInputs, ISupplierContext>((x, y) => context8 = y);
 
+            var broker3 = provider3.Get<IDDBroker>();
+            var supplierOutput3 = provider3.Get<MockAllSupplier<IInputs<object>, object>>();
+            var supplier3 = provider3.Get<MockAllSupplier<IInputs>>();
+            ISupplierContext context9 = null;
+            ISupplierContext context10 = null;
+            ISupplierContext context11 = null;
+            ISupplierContext context12 = null;
+            supplierOutput3.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs<object>, ISupplierContext, CancellationToken>((x, y, z) => context9 = y);
+            supplierOutput3.Mock.SetUpProcessAny()
+                .Callback<IInputs<object>, ISupplierContext>((x, y) => context10 = y);
+            supplier3.MockAsync.SetUpProcessAsyncAny()
+                .Callback<IInputs, ISupplierContext, CancellationToken>((x, y, z) => context11 = y);
+            supplier3.Mock.SetUpProcessAny()
+                .Callback<IInputs, ISupplierContext>((x, y) => context12 = y);
+
             await channel1.ProcessAsync();
             channel2.Process();
             await channel3.ProcessAsync();
             channel4.Process();
-            decoratorOutput.Provider = provider2;
-            decorator.Provider = provider2;
+            decoratorOutput.Scope = scope2;
+            decorator.Scope = scope2;
+            await channel1.ProcessAsync();
+            channel2.Process();
+            await channel3.ProcessAsync();
+            channel4.Process();
+            decoratorOutput.Scope = scope3;
+            decorator.Scope = scope3;
             await channel1.ProcessAsync();
             channel2.Process();
             await channel3.ProcessAsync();
             channel4.Process();
 
-            decoratorOutput.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
-            decoratorOutput.Mock.VerifyProcessAny(Times.Exactly(2));
-            decorator.MockAsync.VerifyProcessAsyncAny(Times.Exactly(2));
-            decorator.Mock.VerifyProcessAny(Times.Exactly(2));
+            decoratorOutput.MockAsync.VerifyProcessAsyncAny(Times.Exactly(3));
+            decoratorOutput.Mock.VerifyProcessAny(Times.Exactly(3));
+            decorator.MockAsync.VerifyProcessAsyncAny(Times.Exactly(3));
+            decorator.Mock.VerifyProcessAny(Times.Exactly(3));
             supplierOutput1.MockAsync.VerifyProcessAsyncAny(Times.Once());
             supplierOutput1.Mock.VerifyProcessAny(Times.Once());
             supplier1.MockAsync.VerifyProcessAsyncAny(Times.Once());
@@ -793,23 +820,37 @@ namespace DDMedi.Test.Tests
             supplierOutput2.Mock.VerifyProcessAny(Times.Once());
             supplier2.MockAsync.VerifyProcessAsyncAny(Times.Once());
             supplier2.Mock.VerifyProcessAny(Times.Once());
+            supplierOutput3.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplierOutput3.Mock.VerifyProcessAny(Times.Once());
+            supplier3.MockAsync.VerifyProcessAsyncAny(Times.Once());
+            supplier3.Mock.VerifyProcessAny(Times.Once());
             Assert.AreNotEqual(context1, context5);
             Assert.AreNotEqual(context2, context6);
             Assert.AreNotEqual(context3, context7);
             Assert.AreNotEqual(context4, context8);
             Assert.AreNotEqual(supplierOutput1, supplierOutput2);
             Assert.AreNotEqual(supplier2, supplier1);
+            Assert.AreNotEqual(supplierOutput3, supplierOutput2);
+            Assert.AreNotEqual(supplier2, supplier3);
             Assert.AreNotEqual(broker1, broker2);
+            Assert.AreNotEqual(broker1, broker3);
             Assert.AreEqual(broker1.CorrelationId, broker2.CorrelationId);
+            Assert.AreEqual(broker3.CorrelationId, testCorrelationId);
+            Assert.AreNotEqual(broker1.CorrelationId, broker3.CorrelationId);
             Assert.AreEqual(context1.CorrelationId, context5.CorrelationId);
             Assert.AreEqual(context2.CorrelationId, context6.CorrelationId);
             Assert.AreEqual(context3.CorrelationId, context7.CorrelationId);
             Assert.AreEqual(context4.CorrelationId, context8.CorrelationId);
+            Assert.AreNotEqual(context1.CorrelationId, context9.CorrelationId);
+            Assert.AreNotEqual(context2.CorrelationId, context10.CorrelationId);
+            Assert.AreNotEqual(context3.CorrelationId, context11.CorrelationId);
+            Assert.AreNotEqual(context4.CorrelationId, context12.CorrelationId);
         }
 
         [Test]
         public async Task EDecoratorScopesTest()
         {
+            var testCorrelationId = "test id!!!";
             var mockSupplier = new Mock<IESupplier<IEInputs>>();
             var mockDecorator = new Mock<IEDecorator<IEInputs>>();
             var collection = CreateCollection();
@@ -824,12 +865,15 @@ namespace DDMedi.Test.Tests
             this.ddBroker = provider.Get<IDDBroker>();
             MockEDecorator<IEInputs> decorator1 = null;
             MockEDecorator<IEInputs> decorator2 = null;
+            MockEDecorator<IEInputs> decorator3 = null;
             IDDBroker broker1 = null;
             IDDBroker broker2 = null;
             IDDBroker broker3 = null;
             IDDBroker broker4 = null;
             IDDBroker broker5 = null;
             IDDBroker broker6 = null;
+            IDDBroker broker7 = null;
+            IDDBroker broker8 = null;
             int i = 0;
             var task = new Task(() => { });
             mockDecorator.SetUpProcessAsyncAny()
@@ -845,14 +889,22 @@ namespace DDMedi.Test.Tests
                     {
                         i++;
                         decorator1 = context.GetNonePublicField<IEDecorator<IEInputs>>() as MockEDecorator<IEInputs>;
-                        decorator1.Provider = context.DDBroker.GetHiddenPublicProperty<IServiceProvider>();
+                        decorator1.Scope = context.DDBroker.GetHiddenPublicProperty<ISupplierScope>();
                         broker2 = context.DDBroker;
                     }
-                    else
+                    if (i == 4)
                     {
+                        i++;
                         decorator2 = context.GetNonePublicField<IEDecorator<IEInputs>>() as MockEDecorator<IEInputs>;
-                        decorator2.Provider = scopeFactory.CreateScope().ServiceProvider;
+                        decorator2.Scope = context.DDBroker.CreateScope();
                         broker3 = context.DDBroker;
+                    }
+                    if (i == 6)
+                    {
+                        i++;
+                        decorator3 = context.GetNonePublicField<IEDecorator<IEInputs>>() as MockEDecorator<IEInputs>;
+                        decorator3.Scope = scopeFactory.CreateScope(testCorrelationId);
+                        broker7 = context.DDBroker;
                     }
                 });
             mockSupplier.SetUpProcessAsyncAny()
@@ -869,9 +921,14 @@ namespace DDMedi.Test.Tests
                         broker5 = context.DDBroker;
                         i++;
                     }
-                    else
+                    if (i == 5)
                     {
                         broker6 = context.DDBroker;
+                        i++;
+                    }
+                    if (i == 7)
+                    {
+                        broker8 = context.DDBroker;
                         task.Start();
                     }
                 });
@@ -879,10 +936,11 @@ namespace DDMedi.Test.Tests
             await this.ddBroker.Publish<IEInputs>();
             await this.ddBroker.Publish<IEInputs>();
             await this.ddBroker.Publish<IEInputs>();
+            await this.ddBroker.Publish<IEInputs>();
             await task;
 
-            mockDecorator.VerifyProcessAsyncAny(Times.Exactly(3));
-            mockSupplier.VerifyProcessAsyncAny(Times.Exactly(3));
+            mockDecorator.VerifyProcessAsyncAny(Times.Exactly(4));
+            mockSupplier.VerifyProcessAsyncAny(Times.Exactly(4));
             Assert.IsNotNull(decorator1);
             Assert.AreNotEqual(decorator1, decorator2);
             Assert.AreEqual(broker1, broker4);
@@ -893,6 +951,11 @@ namespace DDMedi.Test.Tests
             Assert.AreNotEqual(broker3, broker6);
             Assert.AreEqual(broker3.CorrelationId, broker6.CorrelationId);
             Assert.AreEqual(broker1.CorrelationId, broker6.CorrelationId);
+            Assert.AreNotEqual(broker1, broker7);
+            Assert.AreNotEqual(broker3, broker8);
+            Assert.AreEqual(broker1.CorrelationId, broker7.CorrelationId);
+            Assert.AreNotEqual(broker7.CorrelationId, broker8.CorrelationId);
+            Assert.AreEqual(broker8.CorrelationId, testCorrelationId);
         }
         [Test]
         public async Task PublishTest()

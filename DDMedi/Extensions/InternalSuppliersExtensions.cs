@@ -86,11 +86,9 @@ namespace DDMedi
                     descriptor.Queue.QueueItem(exceptionEInputs, correlationId, token);
         }
 
-        internal static IInternalDDBroker CreateBroker(this IServiceProvider provider, string correlationId)
+        internal static T GetService<T>(this IServiceProvider provider)
         {
-            var newBroker = provider.GetService(TypeConstant.IDDBrokerType) as IInternalDDBroker;
-            newBroker.CorrelationId = correlationId;
-            return newBroker;
+            return (T)provider.GetService(typeof(T));
         }
 
         internal static IAsyncSupplierChannel<T, R> CreateAsyncSupplierChannel<T, R>(this IInternalDDBroker ddBroker, SupplierDescriptor descriptor) where T : class

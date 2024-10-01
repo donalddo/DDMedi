@@ -313,10 +313,10 @@ namespace DDMedi.Test.Tests
                 .AddEDecorator<IEInputs, MockEDecorator<IEInputs>>()
                 .BuildSuppliers();
 
-            Assert.IsTrue(ddFactory.BaseDescriptorCollection.Descriptors.Count == 5);
-            var descriptor1 = ddFactory.BaseDescriptorCollection.Descriptors[2];
-            var descriptor2 = ddFactory.BaseDescriptorCollection.Descriptors[3];
-            var descriptor3 = ddFactory.BaseDescriptorCollection.Descriptors[4];
+            Assert.IsTrue(ddFactory.BaseDescriptorCollection.Descriptors.Count == 6);
+            var descriptor1 = ddFactory.BaseDescriptorCollection.Descriptors[3];
+            var descriptor2 = ddFactory.BaseDescriptorCollection.Descriptors[4];
+            var descriptor3 = ddFactory.BaseDescriptorCollection.Descriptors[5];
             Assert.IsTrue(descriptor1.RegisterType == typeof(SuperDummySupplier));
             Assert.IsTrue(descriptor1.Lifetime == expectedLifetime);
             Assert.IsTrue(descriptor2.RegisterType == typeof(MockAsyncDecorator<IInputs>));

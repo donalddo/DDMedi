@@ -8,7 +8,7 @@ namespace DDMedi
         IDDBroker DDBroker { get; }
         string CorrelationId { get; }
     }
-    internal abstract class BaseSupplierContext<TInputs, TSupplier>:
+    internal abstract class BaseSupplierContext<TSupplier>:
         ISupplierContext
         where TSupplier : class
     {
@@ -26,7 +26,7 @@ namespace DDMedi
         }
     }
     internal sealed class AsyncSupplierContext<TInputs, TOutput> :
-        BaseSupplierContext<TInputs, IAsyncSupplier<TInputs, TOutput>>,
+        BaseSupplierContext<IAsyncSupplier<TInputs, TOutput>>,
         IAsyncSupplierChannel<TInputs, TOutput>
         where TInputs : class
     {
@@ -35,7 +35,7 @@ namespace DDMedi
         public Task<TOutput> ProcessAsync(TInputs inputs, CancellationToken cancellationToken = default) => _instance.ProcessAsync(inputs, this, cancellationToken);
     }
     internal sealed class AsyncSupplierContext<TInputs> :
-        BaseSupplierContext<TInputs, IAsyncSupplier<TInputs>>,
+        BaseSupplierContext<IAsyncSupplier<TInputs>>,
         IAsyncSupplierChannel<TInputs>
         where TInputs : class
     {
@@ -44,7 +44,7 @@ namespace DDMedi
         public Task ProcessAsync(TInputs inputs, CancellationToken cancellationToken = default) => _instance.ProcessAsync(inputs, this, cancellationToken);
     }
     internal sealed class SupplierContext<TInputs, TOutput> :
-        BaseSupplierContext<TInputs, ISupplier<TInputs, TOutput>>,
+        BaseSupplierContext<ISupplier<TInputs, TOutput>>,
         ISupplierChannel<TInputs, TOutput>
         where TInputs : class
     {
@@ -53,7 +53,7 @@ namespace DDMedi
         public TOutput Process(TInputs inputs) => _instance.Process(inputs, this);
     }
     internal sealed class SupplierContext<TInputs> :
-        BaseSupplierContext<TInputs, ISupplier<TInputs>>,
+        BaseSupplierContext<ISupplier<TInputs>>,
         ISupplierChannel<TInputs>
         where TInputs : class
     {
@@ -62,7 +62,7 @@ namespace DDMedi
         public void Process(TInputs inputs) => _instance.Process(inputs, this);
     }
     internal sealed class ESupplierContext<TEInputs> :
-        BaseSupplierContext<TEInputs, IESupplier<TEInputs>>,
+        BaseSupplierContext<IESupplier<TEInputs>>,
         IESupplierChannel<TEInputs>
         where TEInputs : IEInputs
     {

@@ -22,20 +22,20 @@ namespace DDMedi
             where T : IEInputs =>
             context.Next(inputs, token);
 
-        public static Task<R> Next<T, R>(this IAsyncDecorator<T, R> currentDecorator, T inputs, IAsyncDecoratorContext<R> context, IServiceProvider provider, CancellationToken token = default)
+        public static Task<R> Next<T, R>(this IAsyncDecorator<T, R> currentDecorator, T inputs, IAsyncDecoratorContext<R> context, ISupplierScope scope, CancellationToken token = default)
             where T : class =>
-            context.Next(inputs, provider, token);
-        public static Task Next<T>(this IAsyncDecorator<T> currentDecorator, T inputs, IAsyncDecoratorContext context, IServiceProvider provider, CancellationToken token = default)
+            context.Next(inputs, scope, token);
+        public static Task Next<T>(this IAsyncDecorator<T> currentDecorator, T inputs, IAsyncDecoratorContext context, ISupplierScope scope, CancellationToken token = default)
             where T : class =>
-            context.Next(inputs, provider, token);
-        public static R Next<T, R>(this IDecorator<T, R> currentDecorator, T inputs, IDecoratorContext<R> context, IServiceProvider provider)
+            context.Next(inputs, scope, token);
+        public static R Next<T, R>(this IDecorator<T, R> currentDecorator, T inputs, IDecoratorContext<R> context, ISupplierScope scope)
             where T : class =>
-            context.Next(inputs, provider);
-        public static void Next<T>(this IDecorator<T> currentDecorator, T inputs, IDecoratorContext context, IServiceProvider provider)
+            context.Next(inputs, scope);
+        public static void Next<T>(this IDecorator<T> currentDecorator, T inputs, IDecoratorContext context, ISupplierScope scope)
             where T : class =>
-            context.Next(inputs, provider);
-        public static Task Next<T>(this IEDecorator<T> currentDecorator, T inputs, IEDecoratorContext context, IServiceProvider provider, CancellationToken token = default)
+            context.Next(inputs, scope);
+        public static Task Next<T>(this IEDecorator<T> currentDecorator, T inputs, IEDecoratorContext context, ISupplierScope scope, CancellationToken token = default)
             where T : IEInputs =>
-            context.Next(inputs, provider, token);
+            context.Next(inputs, scope, token);
     }
 }

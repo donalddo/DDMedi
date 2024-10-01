@@ -36,6 +36,12 @@ namespace DDMedi
             { 
                 Lifetime = SupplierLifetime.Scoped,
                 RegisterType = TypeConstant.IDDBrokerType,
+                GetInstance = (provider) => provider.GetService(typeof(IInternalDDBroker))
+            });
+            _descriptors.Insert(0, new BaseDescriptor
+            {
+                Lifetime = SupplierLifetime.Scoped,
+                RegisterType = typeof(IInternalDDBroker),
                 ImplementType = typeof(DDBroker)
             });
         }

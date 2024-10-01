@@ -95,11 +95,11 @@ namespace DDMedi
         private async Task PrivateCreateAndInvokeProcessAsync<TEInputs>(SupplierDescriptor eSupplierDescriptor, EInputsModel eInputsModel)
             where TEInputs : class, IEInputs
         {
-            using (var newScope = _serviceScopeFactory.CreateScope())
+            using (var newScope = _serviceScopeFactory.CreateScope(eInputsModel.CorrelationId))
             {
                 try
                 {
-                    var ddBroker = newScope.ServiceProvider.CreateBroker(eInputsModel.CorrelationId);
+                    var ddBroker = newScope.ServiceProvider.GetService<IInternalDDBroker>();
                     await ddBroker.CreateESupplierChannel<TEInputs>(eSupplierDescriptor)
                         .ProcessAsync(eInputsModel.Inputs as TEInputs, eInputsModel.CancellationToken);
                 }
