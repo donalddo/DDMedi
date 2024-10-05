@@ -416,10 +416,15 @@ namespace DDMedi.Test.Tests
             CreateAndBuildDDBroker();
             var notImplementedExceptionType = typeof(NotImplementedException);
 
-            Assert.Throws(notImplementedExceptionType, () => ddBroker.ProcessAsync<Dummy2Inputs<DummyOutput>, DummyOutput>(new Dummy2Inputs<DummyOutput>()));
-            Assert.Throws(notImplementedExceptionType, () => ddBroker.ProcessAsync(new Dummy2Inputs()));
-            Assert.Throws(notImplementedExceptionType, () => ddBroker.Process<Dummy2Inputs<DummyOutput>, DummyOutput>(new Dummy2Inputs<DummyOutput>()));
-            Assert.Throws(notImplementedExceptionType, () => ddBroker.Process(new Dummy2Inputs()));
+            var exception1 = Assert.Throws(notImplementedExceptionType, () => ddBroker.ProcessAsync<Dummy2Inputs<DummyOutput>, DummyOutput>(new Dummy2Inputs<DummyOutput>()));
+            var exception2 = Assert.Throws(notImplementedExceptionType, () => ddBroker.ProcessAsync(new Dummy2Inputs()));
+            var exception3 = Assert.Throws(notImplementedExceptionType, () => ddBroker.Process<Dummy2Inputs<DummyOutput>, DummyOutput>(new Dummy2Inputs<DummyOutput>()));
+            var exception4 = Assert.Throws(notImplementedExceptionType, () => ddBroker.Process(new Dummy2Inputs()));
+
+            Assert.AreEqual(exception1.Message, $"{nameof(IAsyncSupplier<object, object>)}<{typeof(Dummy2Inputs<DummyOutput>)},{typeof(DummyOutput)}> is not implemented!");
+            Assert.AreEqual(exception2.Message, $"{nameof(IAsyncSupplier<object>)}<{typeof(Dummy2Inputs)}> is not implemented!");
+            Assert.AreEqual(exception3.Message, $"{nameof(ISupplier<object, object>)}<{typeof(Dummy2Inputs<DummyOutput>)},{typeof(DummyOutput)}> is not implemented!");
+            Assert.AreEqual(exception4.Message, $"{nameof(ISupplier<object>)}<{typeof(Dummy2Inputs)}> is not implemented!");
         }
 
         [Test]
